@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-
+import React, { Component } from 'react';
+import { navigate } from 'gatsby';
 import {
   Typography,
   Switch,
@@ -14,19 +14,17 @@ import {
   StepLabel,
   Button,
   Paper,
-  FormGroup,
-  Box,
-  makeStyles,
   Grid,
   Divider,
-} from '@material-ui/core'
-import moment from 'moment'
-import Autocomplete from '@material-ui/lab/Autocomplete'
-import { orange } from '@material-ui/core/colors'
-import { compose } from 'recompose'
-import { connect } from 'react-redux'
-import { withStyles } from '@material-ui/styles'
-import { withFirebase } from '../components/FirebaseContext'
+} from '@material-ui/core';
+import moment from 'moment';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { orange } from '@material-ui/core/colors';
+import { compose } from 'recompose';
+import { connect } from 'react-redux';
+import { withStyles } from '@material-ui/styles';
+import { v4 as uuidv4 } from 'uuid';
+import { withFirebase } from '../components/FirebaseContext';
 
 const useStyles = theme => ({
   root: {},
@@ -41,7 +39,7 @@ const useStyles = theme => ({
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
-})
+});
 
 const OrangeRadio = withStyles({
   root: {
@@ -51,12 +49,14 @@ const OrangeRadio = withStyles({
     },
   },
   checked: {},
-})(props => <Radio color="default" {...props} />)
+})(props => <Radio color="default" {...props} />);
 
 class JHA extends Component {
   state = {
     activeStep: 0,
     steps: ['Project Details', 'Hazard Identification', 'PPE'],
+    projects: ['Project 1', 'Project 2'],
+    project: null,
     timeIn: '',
     ownerOnSite: false,
     location: {
@@ -84,10 +84,31 @@ class JHA extends Component {
       { label: 'Structure is intact', checked: true },
       { label: 'Site is secure', checked: true },
     ],
+    PPE: [
+      { label: 'Hard Hat', checked: false },
+      { label: 'Steel Toe Boots', checked: false },
+      { label: 'High Visibility Vest', checked: false },
+      { label: 'Eye Protection', checked: false },
+    ],
+    specializedPPERequired: false,
+    specializedPPE: [
+      { label: 'Tool Lanyards', checked: false },
+      { label: 'Hearing (Ear Plugs or Muffs)', checked: false },
+      { label: 'Respiratory', checked: false },
+      { label: 'Hand Protection', checked: false },
+      { label: 'Gas Monitors', checked: false },
+    ],
+    isItSafeToProceed: false,
+    safeToProceedExplanation: '',
+  };
+
+  componentDidMount() {
+    const timeIn = moment().format('YYYY-MM-DD[T]HH:mm');
+    this.setState({ timeIn });
   }
 
   getMiscHazards = () => {
-    const { miscHazards } = this.state
+    const { miscHazards } = this.state;
     return miscHazards.map((miscHazard, index) => (
       <Grid item xs={6} sm={3}>
         <FormControlLabel
@@ -95,17 +116,17 @@ class JHA extends Component {
           label={miscHazard.label}
           checked={miscHazard.checked}
           onChange={() => {
-            const newMiscHazards = miscHazards
-            newMiscHazards[index].checked = !newMiscHazards[index].checked
-            this.setState({ miscHazards: newMiscHazards })
+            const newMiscHazards = miscHazards;
+            newMiscHazards[index].checked = !newMiscHazards[index].checked;
+            this.setState({ miscHazards: newMiscHazards });
           }}
         />
       </Grid>
-    ))
-  }
+    ));
+  };
 
   getHazards = () => {
-    const { hazards } = this.state
+    const { hazards } = this.state;
     return hazards.map((hazard, index) => (
       <Grid item>
         <FormControl component="fieldset" margin="normal">
@@ -116,9 +137,9 @@ class JHA extends Component {
             name={hazard.name}
             value={hazard.risk}
             onChange={evt => {
-              const newHazards = hazards
-              newHazards[index].risk = evt.target.value
-              this.setState({ hazards: newHazards })
+              const newHazards = hazards;
+              newHazards[index].risk = evt.target.value;
+              this.setState({ hazards: newHazards });
             }}
           >
             <FormControlLabel
@@ -144,12 +165,92 @@ class JHA extends Component {
           </RadioGroup>
         </FormControl>
       </Grid>
-    ))
-  }
+    ));
+  };
+
+  getPPE = specialized => {
+    const { PPE, specializedPPE } = this.state;
+    let PPEToMap;
+    if (!specialized) {
+      PPEToMap = PPE;
+    } else {
+      PPEToMap = specializedPPE;
+    }
+    return PPEToMap.map((currentPPE, index) => (
+      <Grid item xs={6} sm={3}>
+        <FormControlLabel
+          control={<Switch color="primary" />}
+          label={currentPPE.label}
+          checked={currentPPE.checked}
+          onChange={() => {
+            const newPPE = PPEToMap;
+            newPPE[index].checked = !PPEToMap[index].checked;
+            if (!specialized) {
+              this.setState({ PPE: newPPE });
+            } else {
+              this.setState({ specializedPPE: newPPE });
+            }
+          }}
+        />
+      </Grid>
+    ));
+  };
+
+  formSubmission = () => {
+    const { firebase } = this.props;
+    const {
+      project,
+      timeIn,
+      ownerOnSite,
+      mitigation,
+      hazards,
+      miscHazards,
+      PPE,
+      specializedPPERequired,
+      specializedPPE,
+      isItSafeToProceed,
+      safeToProceedExplanation,
+    } = this.state;
+    const currentUserID = firebase.auth().currentUser.uid;
+    const newSubmissionID = uuidv4();
+    // firebase.database().ref()
+    firebase
+      .database()
+      .ref(`/JHA/${newSubmissionID}`)
+      .set({
+        user: currentUserID,
+        project,
+        timeIn,
+        ownerOnSite,
+        mitigation,
+        hazards,
+        miscHazards,
+        PPE,
+        specializedPPERequired,
+        specializedPPE,
+        isItSafeToProceed,
+        safeToProceedExplanation,
+      })
+      .then(() => {
+        navigate('/home');
+      });
+  };
 
   render() {
-    const { classes } = this.props
-    const { steps, activeStep, ownerOnSite, mitigation, location } = this.state
+    const { classes } = this.props;
+    const {
+      projects,
+      project,
+      steps,
+      activeStep,
+      ownerOnSite,
+      mitigation,
+      location,
+      timeIn,
+      specializedPPERequired,
+      isItSafeToProceed,
+      safeToProceedExplanation,
+    } = this.state;
     return (
       <>
         <Stepper activeStep={activeStep} alternativeLabel>
@@ -165,14 +266,12 @@ class JHA extends Component {
             <Grid container spacing={2} justify="space-between">
               <Grid item>
                 <Autocomplete
-                  id="combo-box-demo"
-                  options={[
-                    { title: 'Project 1' },
-                    { title: 'Project 2' },
-                    { title: 'Project 3' },
-                  ]}
-                  getOptionLabel={option => option.title}
+                  options={projects}
                   style={{ width: 300 }}
+                  value={project}
+                  onChange={evt => {
+                    this.setState({ project: projects[evt.target.value] });
+                  }}
                   renderInput={params => (
                     <TextField {...params} label="Project" variant="outlined" />
                   )}
@@ -183,7 +282,10 @@ class JHA extends Component {
                   id="datetime-local"
                   label="Time In"
                   type="datetime-local"
-                  defaultValue={moment().format('YYYY-MM-DD[T]HH:mm')}
+                  value={timeIn}
+                  onChange={evt => {
+                    this.setState({ timeIn: evt.target.value });
+                  }}
                   InputLabelProps={{
                     shrink: true,
                   }}
@@ -195,7 +297,7 @@ class JHA extends Component {
                   label="Client/Owner on Site"
                   checked={ownerOnSite}
                   onChange={() => {
-                    this.setState({ ownerOnSite: !ownerOnSite })
+                    this.setState({ ownerOnSite: !ownerOnSite });
                   }}
                 />
               </Grid>
@@ -213,8 +315,8 @@ class JHA extends Component {
                           latitude: position.coords.latitude,
                           longitude: position.coords.longitude,
                         },
-                      })
-                    })
+                      });
+                    });
                   }}
                 >
                   Get Location
@@ -244,7 +346,7 @@ class JHA extends Component {
             <Grid container spacing={2}>
               {this.getMiscHazards()}
             </Grid>
-            <Divider variant="middle" className={classes.divider} />
+            <Divider className={classes.divider} />
             <Grid container spacing={2} justify="space-between">
               {this.getHazards()}
             </Grid>
@@ -258,7 +360,7 @@ class JHA extends Component {
               rows={5}
               value={mitigation}
               onChange={evt => {
-                this.setState({ mitigation: evt.target.value })
+                this.setState({ mitigation: evt.target.value });
               }}
             />
           </Paper>
@@ -266,10 +368,51 @@ class JHA extends Component {
         {steps[activeStep] === 'PPE' && (
           <Paper className={classes.paper} square>
             <Grid container spacing={2} justify="space-between">
-              Hard Hat Steel Toe Boots Vest Eye Protection Is specialized PPE
-              required? Tool Lanyards Hearing Respiratory Hand Protection Gas
-              Monitors Is It Safe To Proceed? Describe
+              {this.getPPE(false)}
             </Grid>
+            <FormControlLabel
+              control={<Switch color="primary" />}
+              label="Is Specialized PPE Required?"
+              checked={specializedPPERequired}
+              onChange={() => {
+                this.setState({
+                  specializedPPERequired: !specializedPPERequired,
+                });
+              }}
+            />
+            <Divider className={classes.divider} />
+            {specializedPPERequired && (
+              <>
+                <Grid container spacing={2} justify="space-between">
+                  {this.getPPE(true)}
+                </Grid>
+                <Divider className={classes.divider} />
+              </>
+            )}
+            <FormControlLabel
+              control={<Switch color="primary" />}
+              label="Is It Safe To Proceed?"
+              checked={isItSafeToProceed}
+              onChange={() => {
+                this.setState({
+                  isItSafeToProceed: !isItSafeToProceed,
+                });
+              }}
+            />
+            {!isItSafeToProceed && (
+              <TextField
+                label="Explanation"
+                fullWidth
+                helperText="Explain why it is not safe to proceed"
+                variant="outlined"
+                multiline
+                rows={5}
+                value={safeToProceedExplanation}
+                onChange={evt => {
+                  this.setState({ safeToProceedExplanation: evt.target.value });
+                }}
+              />
+            )}
           </Paper>
         )}
 
@@ -279,23 +422,31 @@ class JHA extends Component {
           justify="flex-end"
           spacing={1}
         >
-          <Grid item>
-            <Button
-              onClick={() => {
-                const newStep = activeStep - 1
-                this.setState({ activeStep: newStep })
-              }}
-            >
-              Back
-            </Button>
-          </Grid>
+          {activeStep > 0 && (
+            <Grid item>
+              <Button
+                onClick={() => {
+                  if (activeStep > 0) {
+                    const newStep = activeStep - 1;
+                    this.setState({ activeStep: newStep });
+                  }
+                }}
+              >
+                Back
+              </Button>
+            </Grid>
+          )}
           <Grid item>
             <Button
               variant="contained"
               color="primary"
               onClick={() => {
-                const newStep = activeStep + 1
-                this.setState({ activeStep: newStep })
+                if (activeStep !== steps.length - 1) {
+                  const newStep = activeStep + 1;
+                  this.setState({ activeStep: newStep });
+                } else {
+                  this.formSubmission();
+                }
               }}
             >
               {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
@@ -303,16 +454,16 @@ class JHA extends Component {
           </Grid>
         </Grid>
       </>
-    )
+    );
   }
 }
 
 const mapStateToProps = (state, ownProps) => {
-  return { ...ownProps }
-}
+  return { ...ownProps };
+};
 
 export default compose(
   connect(mapStateToProps),
   withFirebase,
   withStyles(useStyles)
-)(JHA)
+)(JHA);

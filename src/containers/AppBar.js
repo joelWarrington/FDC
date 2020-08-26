@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 import {
   Menu as MenuIcon,
+  Home as HomeIcon,
   AccountCircle as AccountCircleIcon,
   Inbox as InboxIcon,
   Mail as MailIcon,
@@ -72,18 +73,16 @@ export default function TopAppBar() {
         }}
       >
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+          {[{ Label: 'Home', url: '/home' }].map((text, index) => (
             <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
+              <ListItemIcon>{text === 'Home' && <HomeIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
         <Divider />
         <List className={classes.list}>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {[].map((text, index) => (
             <ListItem button key={text}>
               <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
