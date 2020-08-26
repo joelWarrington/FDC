@@ -7,9 +7,9 @@ const config = {
   messagingSenderId: '151835344130',
   appId: '1:151835344130:web:3547aa4d7be19c0b61d61b',
   measurementId: 'G-3FT2M8E0GB',
-}
+};
 
-let firebaseCache
+let firebaseCache;
 
 export const getUiConfig = firebase => ({
   signInFlow: 'popup',
@@ -17,16 +17,16 @@ export const getUiConfig = firebase => ({
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     firebase.auth.EmailAuthProvider.PROVIDER_ID,
   ],
-})
+});
 
 const getFirebase = firebase => {
   if (firebaseCache) {
-    return firebaseCache
+    return firebaseCache;
   }
 
-  firebase.initializeApp(config)
-  firebaseCache = firebase
-  return firebase
-}
+  firebase.initializeApp(config);
+  firebaseCache = firebase;
+  return firebase;
+};
 
-export default getFirebase
+export default getFirebase;
