@@ -4,7 +4,6 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Button,
   IconButton,
   Drawer,
   Divider,
@@ -74,9 +73,11 @@ export default function TopAppBar() {
       >
         <List>
           {[{ Label: 'Home', url: '/home' }].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{text === 'Home' && <HomeIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
+            <ListItem button key={text.Label}>
+              <ListItemIcon>
+                {text.Label === 'Home' && <HomeIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text.Label} />
             </ListItem>
           ))}
         </List>

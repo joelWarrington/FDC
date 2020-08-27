@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { navigate } from 'gatsby';
 import {
-  Typography,
   Switch,
   FormControlLabel,
   TextField,
@@ -458,9 +457,7 @@ class JHA extends Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  return { ...ownProps };
-};
+const mapStateToProps = (_state, ownProps) => ({ ...ownProps });
 
 export default compose(
   connect(mapStateToProps),
