@@ -8,6 +8,7 @@ import { withStyles } from '@material-ui/styles';
 import { Paper, Typography } from '@material-ui/core';
 import { compose } from 'recompose';
 import { orange } from '@material-ui/core/colors';
+import LogoIcon from '../images/logo.svg';
 
 import { getUiConfig } from '../firebase';
 import { withFirebase } from '../components/FirebaseContext';
@@ -24,6 +25,10 @@ const useStyles = theme => {
       margin: 'auto',
       backgroundColor: orange[400],
       borderRadius: '50%',
+      '&> svg': {
+        width: 64,
+        height: 64,
+      },
     },
     paper: {
       position: 'absolute',
@@ -33,7 +38,7 @@ const useStyles = theme => {
       left: '50%',
       transform: 'translate(-50%, -50%)',
       maxWidth: 600,
-      padding: 14,
+      padding: '28px 14px',
       textAlign: 'center',
     },
     bg_image: {
@@ -60,13 +65,6 @@ class SignIn extends Component {
                   }
                 }
               }
-              icon: file(relativePath: { eq: "worker.png" }) {
-                childImageSharp {
-                  fluid(maxWidth: 64) {
-                    ...GatsbyImageSharpFluid
-                  }
-                }
-              }
             }
           `}
           render={data => (
@@ -77,7 +75,7 @@ class SignIn extends Component {
               />
               <Paper className={classes.paper}>
                 <div className={classes.icon}>
-                  <Img fluid={data.icon.childImageSharp.fluid} />
+                  <LogoIcon />
                 </div>
                 <Typography
                   variant="h6"
