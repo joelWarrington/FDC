@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-import { Link } from 'gatsby';
-
+import React, { useState, useEffect } from 'react';
+import { navigate } from '@reach/router';
 import {
   Typography,
   Grid,
@@ -18,6 +17,7 @@ import DataIllustration from '../images/data-illustration.svg';
 import FormIllustration from '../images/form-illustration.svg';
 import MobileIllustration from '../images/mobile-illustration.svg';
 import HeroIllustration from '../images/index-hero.svg';
+import { withFirebase } from '../components/FirebaseContext';
 
 const useStyles = makeStyles(theme => {
   return {
@@ -59,8 +59,20 @@ const useStyles = makeStyles(theme => {
 });
 
 const Index = props => {
+  const { firebase } = props;
   const theme = useTheme();
   const classes = useStyles(theme);
+  const [authenticated, setAuthenticated] = useState(false);
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        setAuthenticated(false);
+      } else {
+        setAuthenticated(true);
+      }
+    });
+  });
 
   return (
     <div className={classes.root}>
@@ -74,7 +86,17 @@ const Index = props => {
               Capture the <span className={classes.constrast}>data</span> that
               matters to <span className={classes.constrast}>you</span>.
             </Typography>
-            <Button variant="contained" color="secondary">
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                if (authenticated) {
+                  navigate('/dashboard');
+                } else {
+                  navigate('/signin');
+                }
+              }}
+            >
               Get Started
             </Button>
           </Grid>
@@ -192,4 +214,4 @@ const Index = props => {
   );
 };
 
-export default Index;
+export default withFirebase(Index);

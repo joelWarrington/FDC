@@ -1,3 +1,5 @@
+import { navigate } from '@reach/router';
+
 const config = {
   apiKey: 'AIzaSyBJwGdhiCk3-6oUyYnYuhiWt6d8w7dnV-o',
   authDomain: 'c-dailyreport.firebaseapp.com',
@@ -13,6 +15,11 @@ let firebaseCache;
 
 export const getUiConfig = firebase => ({
   signInFlow: 'popup',
+  callbacks: {
+    signInSuccess: () => {
+      navigate('/dashboard');
+    },
+  },
   signInOptions: [
     firebase.auth.GoogleAuthProvider.PROVIDER_ID,
     firebase.auth.EmailAuthProvider.PROVIDER_ID,

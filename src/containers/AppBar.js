@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   AppBar,
@@ -11,15 +11,20 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  ListSubheader,
+  Button,
+  Menu,
+  MenuItem,
 } from '@material-ui/core';
+import { navigate } from '@reach/router';
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
   AccountCircle as AccountCircleIcon,
-  Inbox as InboxIcon,
-  Mail as MailIcon,
+  Dashboard as DashboardIcon,
 } from '@material-ui/icons';
 import {} from '@material-ui/core/colors';
+import { withFirebase } from '../components/FirebaseContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,9 +41,31 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function TopAppBar() {
+function TopAppBar(props) {
   const classes = useStyles();
+  const { firebase } = props;
   const [drawer, toggleDrawer] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const accountOpen = Boolean(anchorEl);
+
+  const handleMenu = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        setAuthenticated(false);
+      } else {
+        setAuthenticated(true);
+      }
+    });
+  });
 
   return (
     <div className={classes.root}>
@@ -59,9 +86,61 @@ export default function TopAppBar() {
           <Typography variant="h6" className={classes.title}>
             Field Data Capture
           </Typography>
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <AccountCircleIcon />
-          </IconButton>
+          {authenticated ? (
+            <div>
+              <IconButton
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="inherit"
+              >
+                <AccountCircleIcon />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={accountOpen}
+                onClose={handleClose}
+              >
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    navigate('/profile');
+                  }}
+                >
+                  Profile
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleClose();
+                    firebase.auth().signOut();
+                  }}
+                >
+                  Log-Out
+                </MenuItem>
+              </Menu>
+            </div>
+          ) : (
+            <Button
+              color="inherit"
+              variant="outlined"
+              onClick={() => {
+                navigate('/signin');
+              }}
+            >
+              Login
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer
@@ -71,24 +150,50 @@ export default function TopAppBar() {
           toggleDrawer(false);
         }}
       >
-        <List>
-          {[{ Label: 'Home', url: '/home' }].map((text, index) => (
-            <ListItem button key={text.Label}>
+        <List className={classes.list}>
+          {[
+            { Label: 'Home', url: '/' },
+            { Label: 'Dashboard', url: '/dashboard' },
+          ].map(navItem => (
+            <ListItem
+              button
+              key={navItem.Label}
+              onClick={() => {
+                navigate(navItem.url);
+              }}
+              selected={() => {
+                let isActive = false;
+                if (window)
+                  if (window.location.pathname === navItem.url) isActive = true;
+                return isActive;
+              }}
+            >
               <ListItemIcon>
-                {text.Label === 'Home' && <HomeIcon />}
+                {navItem.Label === 'Home' && <HomeIcon />}
+                {navItem.Label === 'Dashboard' && <DashboardIcon />}
               </ListItemIcon>
-              <ListItemText primary={text.Label} />
+              <ListItemText primary={navItem.Label} />
             </ListItem>
           ))}
         </List>
         <Divider />
-        <List className={classes.list}>
-          {[].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+        <List
+          subheader={<ListSubheader>Forms</ListSubheader>}
+          className={classes.list}
+        >
+          {[
+            { Label: 'Request For Information', url: '/forms/rfi' },
+            { Label: 'Daily Report', url: '/forms/dr' },
+            { Label: 'Hazard Assessment', url: '/forms/ha' },
+          ].map(navItem => (
+            <ListItem
+              button
+              key={navItem.Label}
+              onClick={() => {
+                navigate(navItem.url);
+              }}
+            >
+              <ListItemText primary={navItem.Label} />
             </ListItem>
           ))}
         </List>
@@ -96,3 +201,5 @@ export default function TopAppBar() {
     </div>
   );
 }
+
+export default withFirebase(TopAppBar);

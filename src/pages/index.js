@@ -1,6 +1,6 @@
 import React from 'react';
-import Index from '../views/index';
-import Layout from '../components/layout';
+import Index from '../views/Index';
+import Layout from '../components/Layout';
 
 const IndexPage = () => (
   <Layout>
