@@ -112,10 +112,9 @@ const Index = props => {
               Forget paper forms
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              Digital data collection is the future and will connect your
+              workforce. Now your entire team can capture accurate data from any
+              device.
             </Typography>
           </Grid>
           <Grid item xs={6} className={classes.grid_item}>
@@ -123,10 +122,8 @@ const Index = props => {
               View real-time reporting
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              Form submissions and data can be seen in real time to provide you
+              the most insight.
             </Typography>
           </Grid>
           <Grid item xs={6} className={classes.grid_item}>
@@ -140,10 +137,8 @@ const Index = props => {
               Mobile friendly
             </Typography>
             <Typography variant="body1" gutterBottom>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              Forms & Features have been purposefuly built for a mobile
+              experience.
             </Typography>
           </Grid>
         </Grid>
@@ -163,9 +158,9 @@ const Index = props => {
                   Request For Information
                 </Typography>
                 <Typography variant="body2" component="p">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam.
+                  Used when a project&apos;s construction documentation lacks
+                  information that is required to proceed with any given scope
+                  of work.
                 </Typography>
               </CardContent>
               <CardActions>
@@ -180,9 +175,10 @@ const Index = props => {
                   Hazard Assessment
                 </Typography>
                 <Typography variant="body2" component="p">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam.
+                  Process identify, assess, and control workplace hazards and
+                  the risks to worker health and safety. tthe assessment is an
+                  essential part of an organization’s safety culture and safety
+                  management system.
                 </Typography>
               </CardContent>
               <CardActions>
@@ -197,9 +193,10 @@ const Index = props => {
                   Daily Report
                 </Typography>
                 <Typography variant="body2" component="p">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam.
+                  Construction daily reports document all on-site work done for
+                  a construction project in a given day. Daily reports provide
+                  transparency, reduce communication issues and safety risks,
+                  and protect you during lawsuits.
                 </Typography>
               </CardContent>
               <CardActions>

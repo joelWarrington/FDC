@@ -66,6 +66,7 @@ function TopAppBar(props) {
       }
     });
   });
+  console.log(window.location.pathname);
 
   return (
     <div className={classes.root}>
@@ -124,6 +125,7 @@ function TopAppBar(props) {
                   onClick={() => {
                     handleClose();
                     firebase.auth().signOut();
+                    setAuthenticated(false);
                   }}
                 >
                   Log-Out
@@ -161,12 +163,7 @@ function TopAppBar(props) {
               onClick={() => {
                 navigate(navItem.url);
               }}
-              selected={() => {
-                let isActive = false;
-                if (window)
-                  if (window.location.pathname === navItem.url) isActive = true;
-                return isActive;
-              }}
+              selected={window.location.pathname === navItem.url}
             >
               <ListItemIcon>
                 {navItem.Label === 'Home' && <HomeIcon />}
@@ -189,6 +186,7 @@ function TopAppBar(props) {
             <ListItem
               button
               key={navItem.Label}
+              selected={window.location.pathname === navItem.url}
               onClick={() => {
                 navigate(navItem.url);
               }}

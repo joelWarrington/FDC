@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { navigate } from 'gatsby';
 import {
   Switch,
+  Container,
   FormControlLabel,
   TextField,
   Radio,
@@ -26,7 +27,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { withFirebase } from '../components/FirebaseContext';
 
 const useStyles = theme => ({
-  root: {},
+  root: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+  },
   paper: {
     padding: theme.spacing(2),
   },
@@ -231,7 +235,7 @@ class JHA extends Component {
         safeToProceedExplanation,
       })
       .then(() => {
-        navigate('/home');
+        navigate('/forms/ha');
       });
   };
 
@@ -251,7 +255,7 @@ class JHA extends Component {
       safeToProceedExplanation,
     } = this.state;
     return (
-      <>
+      <Container maxWidth="md" className={classes.root}>
         <Stepper activeStep={activeStep} alternativeLabel>
           {steps.map(section => (
             <Step>
@@ -452,7 +456,7 @@ class JHA extends Component {
             </Button>
           </Grid>
         </Grid>
-      </>
+      </Container>
     );
   }
 }
