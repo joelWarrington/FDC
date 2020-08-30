@@ -55,6 +55,14 @@ const useStyles = makeStyles(theme => {
       marginTop: theme.spacing(12),
       marginBottom: theme.spacing(12),
     },
+    card_item: {
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    card_content: {
+      flexGrow: '1',
+    },
   };
 });
 
@@ -146,14 +154,15 @@ const Index = props => {
       <Container maxWidth="md">
         <Grid
           container
+          direction="row"
           justify="center"
           spacing={2}
           alignItems="stretch"
           className={classes.card_grid}
         >
-          <Grid item xs={12} sm={6}>
-            <Card>
-              <CardContent>
+          <Grid item xs>
+            <Card className={classes.card_item}>
+              <CardContent className={classes.card_content}>
                 <Typography variant="h5" component="h2" gutterBottom>
                   Request For Information
                 </Typography>
@@ -164,31 +173,45 @@ const Index = props => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small">Learn More</Button>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    navigate('/forms/rfi');
+                  }}
+                >
+                  Learn More
+                </Button>
               </CardActions>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <Card>
-              <CardContent>
+          <Grid item xs>
+            <Card className={classes.card_item}>
+              <CardContent className={classes.card_content}>
                 <Typography variant="h5" component="h2" gutterBottom>
                   Hazard Assessment
                 </Typography>
                 <Typography variant="body2" component="p">
                   Process identify, assess, and control workplace hazards and
-                  the risks to worker health and safety. tthe assessment is an
+                  the risks to worker health and safety. The assessment is an
                   essential part of an organization’s safety culture and safety
                   management system.
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small">Learn More</Button>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    navigate('/forms/ha');
+                  }}
+                >
+                  Learn More
+                </Button>
               </CardActions>
             </Card>
           </Grid>
-          <Grid item xs={12} sm={6}>
-            <Card>
-              <CardContent>
+          <Grid item xs>
+            <Card className={classes.card_item}>
+              <CardContent className={classes.card_content}>
                 <Typography variant="h5" component="h2" gutterBottom>
                   Daily Report
                 </Typography>
@@ -200,7 +223,14 @@ const Index = props => {
                 </Typography>
               </CardContent>
               <CardActions>
-                <Button size="small">Learn More</Button>
+                <Button
+                  size="small"
+                  onClick={() => {
+                    navigate('/forms/dr');
+                  }}
+                >
+                  Learn More
+                </Button>
               </CardActions>
             </Card>
           </Grid>
