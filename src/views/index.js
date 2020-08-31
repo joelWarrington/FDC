@@ -19,52 +19,50 @@ import MobileIllustration from '../images/mobile-illustration.svg';
 import HeroIllustration from '../images/index-hero.svg';
 import { withFirebase } from '../components/FirebaseContext';
 
-const useStyles = makeStyles(theme => {
-  return {
-    root: {
-      display: 'flex',
-      flexDirection: 'column',
-      minHeight: '100vh',
-      '& svg': {
-        width: '100%',
-        height: 'auto',
-      },
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    '& svg': {
+      width: '100%',
+      height: 'auto',
     },
-    paper: {
-      padding: theme.spacing(2),
-    },
-    hero: {
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(4),
-    },
-    header: {
-      fontWeight: 'bolder',
-    },
-    subheader: {
-      color: theme.palette.primary.main,
-      fontWeight: 'bold',
-    },
-    constrast: {
-      color: theme.palette.primary.main,
-    },
-    grid_item: {
-      marginTop: theme.spacing(4),
-      marginBottom: theme.spacing(4),
-    },
-    card_grid: {
-      marginTop: theme.spacing(12),
-      marginBottom: theme.spacing(12),
-    },
-    card_item: {
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
-    },
-    card_content: {
-      flexGrow: '1',
-    },
-  };
-});
+  },
+  paper: {
+    padding: theme.spacing(2),
+  },
+  hero: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+  },
+  header: {
+    fontWeight: 'bolder',
+  },
+  subheader: {
+    color: theme.palette.primary.main,
+    fontWeight: 'bold',
+  },
+  constrast: {
+    color: theme.palette.primary.main,
+  },
+  grid_item: {
+    marginTop: theme.spacing(4),
+    marginBottom: theme.spacing(4),
+  },
+  card_grid: {
+    marginTop: theme.spacing(12),
+    marginBottom: theme.spacing(12),
+  },
+  card_item: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  card_content: {
+    flexGrow: '1',
+  },
+}));
 
 const Index = props => {
   const { firebase } = props;

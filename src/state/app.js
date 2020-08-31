@@ -1,16 +1,19 @@
 const initialState = {
-  selectedGame: null,
-}
+  selectedHA: null,
+};
 
-const SELECT_GAME = 'SELECT_GAME'
-export const selectGame = game => ({ type: SELECT_GAME, payload: game })
+const SELECT_HAZARD_ASSESSMENT = 'SELECT_HAZARD_ASSESSMENT';
+export const selectHazardAssessment = hazardAssessment => ({
+  type: SELECT_HAZARD_ASSESSMENT,
+  payload: hazardAssessment,
+});
 
 export default (state = initialState, action) => {
-  const { type, payload } = action
+  const { type, payload } = action;
   switch (type) {
-    case SELECT_GAME:
-      return { ...state, selectedGame: payload }
+    case SELECT_HAZARD_ASSESSMENT:
+      return { ...state, selectedHA: payload };
     default:
-      return state
+      return state;
   }
-}
+};
