@@ -19,9 +19,11 @@ import {
   List,
   ListItem,
   ListItemText,
+  Fab,
 } from '@material-ui/core';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
+import AddIcon from '@material-ui/icons/Add';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import moment from 'moment';
 import { withFirebase } from '../components/FirebaseContext';
@@ -42,6 +44,11 @@ const useStyles = makeStyles(theme => ({
   divider: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
+  },
+  fab: {
+    position: 'absolute',
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
   },
 }));
 
@@ -93,11 +100,24 @@ const HazardAssessmentList = props => {
           ))}
         </List>
       </Paper>
+      <Fab
+        color="primary"
+        aria-label="add"
+        className={classes.fab}
+        onClick={() => {
+          navigate('/forms/ha/new');
+        }}
+      >
+        <AddIcon />
+      </Fab>
     </Container>
   );
 };
 
-const mapStateToProps = (_state, ownProps) => ({ ...ownProps, state: _state });
+const mapStateToProps = (_state, ownProps) => ({
+  ...ownProps,
+  state: _state.app,
+});
 
 const mapDispatchToProps = dispatch => ({
   selectAHazardAssessment: hazardAssessment =>
