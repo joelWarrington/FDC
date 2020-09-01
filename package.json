@@ -1,7 +1,7 @@
 {
   "name": "fielddatacapture",
   "description": "Field Data Capture; capture data in the field",
-  "version": "0.1",
+  "version": "0.2",
   "author": "Joel Warrington <joelwarrington@gmail.com>",
   "dependencies": {
     "@material-ui/core": "^4.11.0",
