@@ -75,7 +75,7 @@ const HazardAssessmentNewForm = props => {
     longitude: '',
   });
   const [ownerOnSite, updateOwnerOnSite] = useState(false);
-  const [mitigationSteps, updateMitigationSteps] = useState(false);
+  const [mitigationSteps, updateMitigationSteps] = useState('');
   const [hazards, updateHazards] = useState([
     { label: 'COVID-19', name: 'covid19', risk: 'N/A' },
     { label: 'Heights Over 3 Meters', name: 'heights', risk: 'N/A' },
@@ -142,6 +142,8 @@ const HazardAssessmentNewForm = props => {
         navigate('/forms/ha');
       });
   };
+
+  const handleHazardChange = newHazards => {};
 
   const projectSection = () => (
     <>
@@ -220,7 +222,6 @@ const HazardAssessmentNewForm = props => {
       </Grid>
     </>
   );
-
   const hazardIdentificationSection = () => (
     <>
       <Grid container spacing={2}>
@@ -231,7 +232,7 @@ const HazardAssessmentNewForm = props => {
               label={miscHazard.label}
               checked={miscHazard.checked}
               onChange={() => {
-                const newMiscHazards = miscHazards;
+                const newMiscHazards = [...miscHazards];
                 newMiscHazards[index].checked = !newMiscHazards[index].checked;
                 updateMiscHazards(newMiscHazards);
               }}
@@ -251,7 +252,7 @@ const HazardAssessmentNewForm = props => {
                 name={hazard.name}
                 value={hazard.risk}
                 onChange={evt => {
-                  const newHazards = hazards;
+                  const newHazards = [...hazards];
                   newHazards[index].risk = evt.target.value;
                   updateHazards(newHazards);
                 }}
@@ -306,7 +307,7 @@ const HazardAssessmentNewForm = props => {
               label={currentPPE.label}
               checked={currentPPE.checked}
               onChange={() => {
-                const newPPE = PPE;
+                const newPPE = [...PPE];
                 newPPE[index].checked = !PPE[index].checked;
                 updatePPE(newPPE);
               }}
@@ -333,7 +334,7 @@ const HazardAssessmentNewForm = props => {
                   label={currentPPE.label}
                   checked={currentPPE.checked}
                   onChange={() => {
-                    const newPPE = specializedPPE;
+                    const newPPE = [...specializedPPE];
                     newPPE[index].checked = !specializedPPE[index].checked;
                     updateSpecializedPPE(newPPE);
                   }}
