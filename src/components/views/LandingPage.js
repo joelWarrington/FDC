@@ -11,13 +11,13 @@ import {
   CardActions,
 } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/core/styles';
-import Footer from '../components/Footer';
+import Footer from '../containers/Footer';
 
-import DataIllustration from '../images/data-illustration.svg';
-import FormIllustration from '../images/form-illustration.svg';
-import MobileIllustration from '../images/mobile-illustration.svg';
-import HeroIllustration from '../images/index-hero.svg';
-import { withFirebase } from '../components/FirebaseContext';
+import DataIllustration from '../../images/data-illustration.svg';
+import FormIllustration from '../../images/form-illustration.svg';
+import MobileIllustration from '../../images/mobile-illustration.svg';
+import HeroIllustration from '../../images/index-hero.svg';
+import { withFirebase } from '../containers/FirebaseContext';
 
 const useStyles = makeStyles(theme => ({
   root: {

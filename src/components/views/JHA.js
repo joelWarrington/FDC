@@ -24,7 +24,7 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/styles';
 import { v4 as uuidv4 } from 'uuid';
-import { withFirebase } from '../components/FirebaseContext';
+import { withFirebase } from '../containers/FirebaseContext';
 
 const useStyles = theme => ({
   root: {

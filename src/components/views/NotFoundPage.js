@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Container, Paper, Typography, Button } from '@material-ui/core';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import NotFoundIllustration from '../images/not-found.svg';
-import Layout from '../components/Layout';
-import Footer from '../components/Footer';
 import { navigate } from '@reach/router';
+import NotFoundIllustration from '../../images/not-found.svg';
+import Footer from '../containers/Footer';
 
 const useStyles = makeStyles(theme => {
   return {

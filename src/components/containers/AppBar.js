@@ -24,7 +24,7 @@ import {
   Dashboard as DashboardIcon,
 } from '@material-ui/icons';
 import {} from '@material-ui/core/colors';
-import { withFirebase } from '../components/FirebaseContext';
+import { withFirebase } from './FirebaseContext';
 
 const useStyles = makeStyles(theme => ({
   root: {

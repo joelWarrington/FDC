@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 
 import getFirebase from '../firebase';
-import FirebaseContext from '../components/FirebaseContext';
-import SignIn from '../views/SignIn';
+import FirebaseContext from '../components/containers/FirebaseContext';
 
 class Layout extends Component {
   state = {
@@ -38,7 +37,6 @@ class Layout extends Component {
     return (
       <FirebaseContext.Provider value={firebase}>
         {children}
-        {/* {authenticated ? children : <SignIn />} */}
       </FirebaseContext.Provider>
     );
   };

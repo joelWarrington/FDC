@@ -1,5 +1,5 @@
 import React from 'react';
-import SignIn from '../views/SignIn';
+import SignIn from '../components/views/SignInPage';
 
 const IndexPage = () => <SignIn />;
 

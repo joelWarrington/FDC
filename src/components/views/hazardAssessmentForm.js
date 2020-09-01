@@ -24,8 +24,8 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { makeStyles, useTheme } from '@material-ui/styles';
-import { withFirebase } from '../components/FirebaseContext';
-import { selectHazardAssessment } from '../state/app';
+import { withFirebase } from '../containers/FirebaseContext';
+import { selectHazardAssessment } from '../../state/app';
 
 const useStyles = makeStyles(theme => ({
   root: {

@@ -1,6 +1,6 @@
 import React from 'react';
-import NotFound from '../views/NotFound';
-import Layout from '../components/Layout';
+import NotFound from '../components/views/NotFoundPage';
+import Layout from '../components/containers/Layout';
 
 const IndexPage = () => (
   <Layout>

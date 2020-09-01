@@ -3,15 +3,14 @@ import React, { Component } from 'react';
 import { StyledFirebaseAuth } from 'react-firebaseui';
 import { StaticQuery, graphql } from 'gatsby';
 import Img from 'gatsby-image';
-import '../components/styles.css';
 import { withStyles } from '@material-ui/styles';
 import { Paper, Typography } from '@material-ui/core';
 import { compose } from 'recompose';
 import { orange } from '@material-ui/core/colors';
-import LogoIcon from '../images/logo.svg';
+import LogoIcon from '../../images/logo.svg';
 
-import { getUiConfig } from '../firebase';
-import { withFirebase } from '../components/FirebaseContext';
+import { getUiConfig } from '../../firebase';
+import { withFirebase } from '../containers/FirebaseContext';
 
 const useStyles = theme => {
   return {
