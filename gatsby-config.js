@@ -26,16 +26,21 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: 'gatsby-starter-firebase',
-        short_name: 'starter',
+        name: 'Field Data Capture',
+        short_name: 'FDC',
         start_url: '/',
         background_color: '#ffb200',
         theme_color: '#663399',
-        display: 'minimal-ui',
-        icon: 'src/images/gatsby-icon.png', // This path is relative to the root of the site.
+        display: 'standalone',
+        icon: 'src/images/logo.png',
       },
     },
     'gatsby-plugin-layout',
-    // 'gatsby-plugin-offline',
+    {
+      resolve: 'gatsby-plugin-offline',
+      options: {
+        precachePages: [`/forms/*`, `/dashboard/`, `/signin/`],
+      },
+    },
   ],
 };
