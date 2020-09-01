@@ -1,10 +1,10 @@
 import React from 'react';
 import Layout from '../../../components/containers/Layout';
-import HazardAssessmentForm from '../../../components/views/JHA';
+import HazardAssessmentNewForm from '../../../components/views/Hazard Assessment/new';
 
 const HazardAssessmentPage = () => (
   <Layout>
-    <HazardAssessmentForm />
+    <HazardAssessmentNewForm />
   </Layout>
 );
 
