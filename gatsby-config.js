@@ -38,9 +38,6 @@ module.exports = {
     'gatsby-plugin-layout',
     {
       resolve: 'gatsby-plugin-offline',
-      options: {
-        precachePages: [`/forms/*`, `/dashboard/`, `/signin/`],
-      },
     },
   ],
 };
