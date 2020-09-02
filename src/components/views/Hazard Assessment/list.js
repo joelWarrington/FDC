@@ -13,8 +13,8 @@ import { connect } from 'react-redux';
 import AddIcon from '@material-ui/icons/Add';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import moment from 'moment';
-import { withFirebase } from '../containers/FirebaseContext';
-import { selectHazardAssessment } from '../../state/app';
+import { withFirebase } from '../../containers/FirebaseContext';
+import { selectHazardAssessment } from '../../../state/app';
 
 const useStyles = makeStyles(theme => ({
   root: {

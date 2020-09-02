@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { navigate } from 'gatsby';
 import {
   Switch,
@@ -57,14 +57,9 @@ const OrangeRadio = withStyles({
 const HazardAssessmentNewForm = props => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { firebase } = props;
+  const { firebase, state } = props;
+  const { selectedHA } = state;
 
-  const [activeStep, updateActiveStep] = useState(0);
-  const [steps, updateSteps] = useState([
-    'Project Details',
-    'Hazard Identification',
-    'PPE',
-  ]);
   const [projects, updateProjects] = useState(['Project 1', 'Project 2']);
   const [project, updateProject] = useState('');
   const [timeIn, updateTimeIn] = useState(
@@ -117,6 +112,32 @@ const HazardAssessmentNewForm = props => {
     ''
   );
 
+  useEffect(() => {
+    const hazardAssessmentRef = firebase.database().ref(`/JHA/${selectedHA}`);
+
+    hazardAssessmentRef.once('value', snapshot => {
+      const hazardAssessmentSnapshot = snapshot.val();
+      if (hazardAssessmentSnapshot !== null) {
+        updateProject(hazardAssessmentSnapshot.project);
+        updateTimeIn(hazardAssessmentSnapshot.timeIn);
+        updateLocation(hazardAssessmentSnapshot.location);
+        updateOwnerOnSite(hazardAssessmentSnapshot.ownerOnSite);
+        updateMitigationSteps(hazardAssessmentSnapshot.mitigationSteps);
+        updateHazards(hazardAssessmentSnapshot.hazards);
+        updateMiscHazards(hazardAssessmentSnapshot.miscHazards);
+        updatePPE(hazardAssessmentSnapshot.PPE);
+        updateSpecializedPPERequired(
+          hazardAssessmentSnapshot.specializedPPERequired
+        );
+        updateSpecializedPPE(hazardAssessmentSnapshot.specializedPPE);
+        updateIsItSafeToProceed(hazardAssessmentSnapshot.isItSafeToProceed);
+        updateSafeToProceedExplanation(
+          hazardAssessmentSnapshot.safeToProceedExplanation
+        );
+      }
+    });
+  }, [selectedHA]);
+
   const formSubmission = () => {
     const currentUserID = firebase.auth().currentUser.uid;
     const newSubmissionID = uuidv4();
@@ -127,7 +148,6 @@ const HazardAssessmentNewForm = props => {
         user: currentUserID,
         project,
         timeIn,
-        location,
         ownerOnSite,
         mitigationSteps,
         hazards,
@@ -370,18 +390,12 @@ const HazardAssessmentNewForm = props => {
 
   return (
     <Container maxWidth="md" className={classes.root}>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map(step => (
-          <Step key={step}>
-            <StepLabel>{step}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
       <Paper className={classes.paper} square>
-        {steps[activeStep] === 'Project Details' && projectSection()}
-        {steps[activeStep] === 'Hazard Identification' &&
-          hazardIdentificationSection()}
-        {steps[activeStep] === 'PPE' && PPESection()}
+        {projectSection()}
+        <Divider className={classes.divider} />
+        {hazardIdentificationSection()}
+        <Divider className={classes.divider} />
+        {PPESection()}
       </Paper>
       <Grid
         className={classes.stepperButtons}
@@ -389,32 +403,15 @@ const HazardAssessmentNewForm = props => {
         justify="flex-end"
         spacing={1}
       >
-        {activeStep > 0 && (
-          <Grid item>
-            <Button
-              onClick={() => {
-                if (activeStep > 0) {
-                  updateActiveStep(activeStep - 1);
-                }
-              }}
-            >
-              Back
-            </Button>
-          </Grid>
-        )}
         <Grid item>
           <Button
             variant="contained"
             color="primary"
             onClick={() => {
-              if (activeStep !== steps.length - 1) {
-                updateActiveStep(activeStep + 1);
-              } else {
-                formSubmission();
-              }
+              formSubmission();
             }}
           >
-            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+            Submit
           </Button>
         </Grid>
       </Grid>
@@ -422,7 +419,10 @@ const HazardAssessmentNewForm = props => {
   );
 };
 
-const mapStateToProps = (_state, ownProps) => ({ ...ownProps });
+const mapStateToProps = (_state, ownProps) => ({
+  ...ownProps,
+  state: _state.app,
+});
 
 export default compose(
   connect(mapStateToProps),
