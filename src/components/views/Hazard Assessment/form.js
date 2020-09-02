@@ -136,10 +136,13 @@ const HazardAssessmentForm = props => {
 
   const formSubmission = () => {
     const currentUserID = firebase.auth().currentUser.uid;
-    const newSubmissionID = uuidv4();
+    let submissionID = uuidv4();
+    if (id) {
+      submissionID = id;
+    }
     firebase
       .database()
-      .ref(`/JHA/${newSubmissionID}`)
+      .ref(`/JHA/${submissionID}`)
       .set({
         user: currentUserID,
         project,
