@@ -7,6 +7,7 @@ import {
   ListItem,
   ListItemText,
   Fab,
+  Button,
 } from '@material-ui/core';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -34,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(2),
   },
   fab: {
-    position: 'absolute',
+    position: 'fixed',
     bottom: theme.spacing(2),
     right: theme.spacing(2),
   },
@@ -46,6 +47,7 @@ const HazardAssessmentList = props => {
   const classes = useStyles(theme);
   const [hazardAssessments, updateHazardAssessments] = useState({});
   const [indexedAssessments, setIndexedAssessments] = useState([]);
+  const [editable, updateEditable] = useState(false);
 
   useEffect(() => {
     const hazardAssessmentListRef = firebase.database().ref('JHA');
@@ -69,35 +71,60 @@ const HazardAssessmentList = props => {
   }, []);
   return (
     <Container maxWidth="md" className={classes.root}>
-      <Paper>
-        <List dense>
-          {indexedAssessments.map(key => (
-            <ListItem
-              button
-              key={key}
+      {!state.selectedHA ? (
+        <>
+          <Paper>
+            <List dense>
+              {indexedAssessments.map(key => (
+                <ListItem
+                  button
+                  key={key}
+                  onClick={() => {
+                    selectAHazardAssessment(key);
+                  }}
+                >
+                  <ListItemText
+                    primary={hazardAssessments[key]?.project}
+                    secondary={moment(hazardAssessments[key]?.timeIn).fromNow()}
+                  />
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+          <Fab
+            color="primary"
+            aria-label="add"
+            className={classes.fab}
+            onClick={() => {
+              navigate('/forms/ha/new');
+            }}
+          >
+            <AddIcon />
+          </Fab>
+        </>
+      ) : (
+        <>
+          <Button
+            variant="contained"
+            onClick={() => {
+              selectAHazardAssessment(null);
+            }}
+          >
+            Go Back
+          </Button>
+          {!editable && (
+            <Button
+              variant="contained"
               onClick={() => {
-                selectAHazardAssessment(key);
+                updateEditable(true);
               }}
             >
-              <ListItemText
-                primary={hazardAssessments[key]?.project}
-                secondary={moment(hazardAssessments[key]?.timeIn).fromNow()}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Paper>
-      <HazardAssessmentForm id={state.selectedHA} />
-      <Fab
-        color="primary"
-        aria-label="add"
-        className={classes.fab}
-        onClick={() => {
-          navigate('/forms/ha/new');
-        }}
-      >
-        <AddIcon />
-      </Fab>
+              Edit
+            </Button>
+          )}
+          <HazardAssessmentForm id={state.selectedHA} editable={editable} />
+        </>
+      )}
     </Container>
   );
 };

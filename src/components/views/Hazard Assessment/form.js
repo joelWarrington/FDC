@@ -505,5 +505,3 @@ export default compose(
   connect(mapStateToProps),
   withFirebase
 )(HazardAssessmentForm);
-
-// props -> id (nullable), stepped?, editable?
