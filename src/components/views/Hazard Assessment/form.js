@@ -1,11 +1,10 @@
-import React, { Component, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { navigate } from 'gatsby';
 import {
   Switch,
   Container,
   FormControlLabel,
   TextField,
-  Radio,
   RadioGroup,
   FormControl,
   FormLabel,
@@ -17,14 +16,14 @@ import {
   Grid,
   Divider,
 } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { makeStyles, useTheme, withStyles } from '@material-ui/styles';
-import { orange } from '@material-ui/core/colors';
+import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
-import PropTypes from 'prop-types';
+import OrangeRadio from '../../atoms/OrangeRadioButton';
 import { withFirebase } from '../../containers/FirebaseContext';
 
 const useStyles = makeStyles(theme => ({
@@ -45,20 +44,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const OrangeRadio = withStyles({
-  root: {
-    color: orange[400],
-    '&$checked': {
-      color: orange[600],
-    },
-  },
-  checked: {},
-})(props => <Radio color="default" {...props} />);
-
-const HazardAssessmentNewForm = props => {
+const HazardAssessmentForm = props => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { firebase } = props;
+  const { firebase, id, stepped, editable } = props;
 
   const [activeStep, updateActiveStep] = useState(0);
   const [steps, updateSteps] = useState([
@@ -118,6 +107,33 @@ const HazardAssessmentNewForm = props => {
     ''
   );
 
+  useEffect(() => {
+    if (id !== null) {
+      const hazardAssessmentRef = firebase.database().ref(`/JHA/${id}`);
+      hazardAssessmentRef.once('value', snapshot => {
+        const hazardAssessmentSnapshot = snapshot.val();
+        if (hazardAssessmentSnapshot !== null) {
+          updateProject(hazardAssessmentSnapshot.project);
+          updateTimeIn(hazardAssessmentSnapshot.timeIn);
+          updateLocation(hazardAssessmentSnapshot.location);
+          updateOwnerOnSite(hazardAssessmentSnapshot.ownerOnSite);
+          updateMitigationSteps(hazardAssessmentSnapshot.mitigationSteps);
+          updateHazards(hazardAssessmentSnapshot.hazards);
+          updateMiscHazards(hazardAssessmentSnapshot.miscHazards);
+          updatePPE(hazardAssessmentSnapshot.PPE);
+          updateSpecializedPPERequired(
+            hazardAssessmentSnapshot.specializedPPERequired
+          );
+          updateSpecializedPPE(hazardAssessmentSnapshot.specializedPPE);
+          updateIsItSafeToProceed(hazardAssessmentSnapshot.isItSafeToProceed);
+          updateSafeToProceedExplanation(
+            hazardAssessmentSnapshot.safeToProceedExplanation
+          );
+        }
+      });
+    }
+  }, [id]);
+
   const formSubmission = () => {
     const currentUserID = firebase.auth().currentUser.uid;
     const newSubmissionID = uuidv4();
@@ -154,6 +170,7 @@ const HazardAssessmentNewForm = props => {
             onChange={evt => {
               updateProject(projects[evt.target.value]);
             }}
+            disabled={!editable}
             renderInput={params => (
               <TextField {...params} label="Project" variant="outlined" />
             )}
@@ -168,6 +185,7 @@ const HazardAssessmentNewForm = props => {
             onChange={evt => {
               updateTimeIn(evt.target.value);
             }}
+            disabled={!editable}
             InputLabelProps={{
               shrink: true,
             }}
@@ -178,6 +196,7 @@ const HazardAssessmentNewForm = props => {
             control={<Switch color="primary" />}
             label="Client/Owner on Site"
             checked={ownerOnSite}
+            disabled={!editable}
             onChange={() => {
               updateOwnerOnSite(!ownerOnSite);
             }}
@@ -186,22 +205,26 @@ const HazardAssessmentNewForm = props => {
       </Grid>
       <Divider variant="middle" className={classes.divider} />
       <Grid container spacing={2}>
-        <Grid item>
-          <Button
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              navigator.geolocation.getCurrentPosition(position => {
-                updateLocation({
-                  latitude: position.coords.latitude,
-                  longitude: position.coords.longitude,
+        {editable && (
+          <Grid item>
+            <Button
+              variant="outlined"
+              color="primary"
+              disabled={!editable}
+              onClick={() => {
+                navigator.geolocation.getCurrentPosition(position => {
+                  updateLocation({
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                  });
                 });
-              });
-            }}
-          >
-            Get Location
-          </Button>
-        </Grid>
+              }}
+            >
+              Get Location
+            </Button>
+          </Grid>
+        )}
+
         <Grid item>
           <TextField
             disabled
@@ -230,6 +253,7 @@ const HazardAssessmentNewForm = props => {
               control={<Switch color="primary" />}
               label={miscHazard.label}
               checked={miscHazard.checked}
+              disabled={!editable}
               onChange={() => {
                 const newMiscHazards = [...miscHazards];
                 newMiscHazards[index].checked = !newMiscHazards[index].checked;
@@ -257,21 +281,25 @@ const HazardAssessmentNewForm = props => {
                 }}
               >
                 <FormControlLabel
+                  disabled={!editable}
                   value="N/A"
                   control={<OrangeRadio />}
                   label="N/A"
                 />
                 <FormControlLabel
+                  disabled={!editable}
                   value="Minor"
                   control={<OrangeRadio />}
                   label="Minor"
                 />
                 <FormControlLabel
+                  disabled={!editable}
                   value="Moderate"
                   control={<OrangeRadio />}
                   label="Moderate"
                 />
                 <FormControlLabel
+                  disabled={!editable}
                   value="Severe"
                   control={<OrangeRadio />}
                   label="Severe"
@@ -283,6 +311,7 @@ const HazardAssessmentNewForm = props => {
       </Grid>
       <TextField
         label="Mitigation Steps"
+        disabled={!editable}
         fullWidth
         helperText="How will you mitigate the risks above"
         variant="outlined"
@@ -305,6 +334,7 @@ const HazardAssessmentNewForm = props => {
               control={<Switch color="primary" />}
               label={currentPPE.label}
               checked={currentPPE.checked}
+              disabled={!editable}
               onChange={() => {
                 const newPPE = [...PPE];
                 newPPE[index].checked = !PPE[index].checked;
@@ -318,6 +348,7 @@ const HazardAssessmentNewForm = props => {
         control={<Switch color="primary" />}
         label="Is Specialized PPE Required?"
         checked={specializedPPERequired}
+        disabled={!editable}
         onChange={() => {
           updateSpecializedPPERequired(!specializedPPERequired);
         }}
@@ -329,7 +360,7 @@ const HazardAssessmentNewForm = props => {
             {specializedPPE.map((currentPPE, index) => (
               <Grid item xs={6} sm={3} key={currentPPE.label}>
                 <FormControlLabel
-                  control={<Switch color="primary" />}
+                  control={<Switch color="primary" disabled={!editable} />}
                   label={currentPPE.label}
                   checked={currentPPE.checked}
                   onChange={() => {
@@ -348,6 +379,7 @@ const HazardAssessmentNewForm = props => {
         control={<Switch color="primary" />}
         label="Is It Safe To Proceed?"
         checked={isItSafeToProceed}
+        disabled={!editable}
         onChange={() => {
           updateIsItSafeToProceed(!isItSafeToProceed);
         }}
@@ -360,6 +392,7 @@ const HazardAssessmentNewForm = props => {
           variant="outlined"
           multiline
           rows={5}
+          disabled={!editable}
           value={safeToProceedExplanation}
           onChange={evt => {
             updateSafeToProceedExplanation(evt.target.value);
@@ -370,57 +403,100 @@ const HazardAssessmentNewForm = props => {
   );
 
   return (
-    <Container maxWidth="md" className={classes.root}>
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map(step => (
-          <Step key={step}>
-            <StepLabel>{step}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-      <Paper className={classes.paper} square>
-        {steps[activeStep] === 'Project Details' && projectSection()}
-        {steps[activeStep] === 'Hazard Identification' &&
-          hazardIdentificationSection()}
-        {steps[activeStep] === 'PPE' && PPESection()}
-      </Paper>
-      <Grid
-        className={classes.stepperButtons}
-        container
-        justify="flex-end"
-        spacing={1}
-      >
-        {activeStep > 0 && (
-          <Grid item>
-            <Button
-              onClick={() => {
-                if (activeStep > 0) {
-                  updateActiveStep(activeStep - 1);
-                }
-              }}
-            >
-              Back
-            </Button>
-          </Grid>
-        )}
-        <Grid item>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              if (activeStep !== steps.length - 1) {
-                updateActiveStep(activeStep + 1);
-              } else {
-                formSubmission();
-              }
-            }}
+    <div className={classes.root}>
+      {stepped ? (
+        <>
+          <Stepper activeStep={activeStep} alternativeLabel>
+            {steps.map(step => (
+              <Step key={step}>
+                <StepLabel>{step}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          <Paper className={classes.paper} square>
+            {steps[activeStep] === 'Project Details' && projectSection()}
+            {steps[activeStep] === 'Hazard Identification' &&
+              hazardIdentificationSection()}
+            {steps[activeStep] === 'PPE' && PPESection()}
+          </Paper>
+          <Grid
+            className={classes.stepperButtons}
+            container
+            justify="flex-end"
+            spacing={1}
           >
-            {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
-          </Button>
-        </Grid>
-      </Grid>
-    </Container>
+            {activeStep > 0 && (
+              <Grid item>
+                <Button
+                  onClick={() => {
+                    if (activeStep > 0) {
+                      updateActiveStep(activeStep - 1);
+                    }
+                  }}
+                >
+                  Back
+                </Button>
+              </Grid>
+            )}
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  if (activeStep !== steps.length - 1) {
+                    updateActiveStep(activeStep + 1);
+                  } else {
+                    formSubmission();
+                  }
+                }}
+              >
+                {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
+              </Button>
+            </Grid>
+          </Grid>
+        </>
+      ) : (
+        <>
+          <Paper className={classes.paper} square>
+            {projectSection()}
+            {hazardIdentificationSection()}
+            {PPESection()}
+          </Paper>
+          <Grid
+            className={classes.stepperButtons}
+            container
+            justify="flex-end"
+            spacing={1}
+          >
+            <Grid item>
+              <Button
+                disabled={!editable}
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  formSubmission();
+                }}
+              >
+                Submit
+              </Button>
+            </Grid>
+          </Grid>
+        </>
+      )}
+    </div>
   );
+};
+
+HazardAssessmentForm.defaultProps = {
+  id: null,
+  stepped: false,
+  editable: false,
+};
+
+HazardAssessmentForm.propTypes = {
+  id: PropTypes.string,
+  stepped: PropTypes.bool,
+  editable: PropTypes.bool,
 };
 
 const mapStateToProps = (_state, ownProps) => ({ ...ownProps });
@@ -428,4 +504,6 @@ const mapStateToProps = (_state, ownProps) => ({ ...ownProps });
 export default compose(
   connect(mapStateToProps),
   withFirebase
-)(HazardAssessmentNewForm);
+)(HazardAssessmentForm);
+
+// props -> id (nullable), stepped?, editable?

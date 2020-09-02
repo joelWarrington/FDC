@@ -4,7 +4,7 @@ import HazardAssessmentNewForm from '../../../components/views/Hazard Assessment
 
 const HazardAssessmentPage = () => (
   <Layout>
-    <HazardAssessmentNewForm />
+    <HazardAssessmentNewForm editable />
   </Layout>
 );
 

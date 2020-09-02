@@ -15,6 +15,7 @@ import { makeStyles, useTheme } from '@material-ui/styles';
 import moment from 'moment';
 import { withFirebase } from '../../containers/FirebaseContext';
 import { selectHazardAssessment } from '../../../state/app';
+import HazardAssessmentForm from './form';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -40,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const HazardAssessmentList = props => {
-  const { firebase, selectAHazardAssessment } = props;
+  const { firebase, selectAHazardAssessment, state } = props;
   const theme = useTheme();
   const classes = useStyles(theme);
   const [hazardAssessments, updateHazardAssessments] = useState({});
@@ -86,6 +87,7 @@ const HazardAssessmentList = props => {
           ))}
         </List>
       </Paper>
+      <HazardAssessmentForm id={state.selectedHA} />
       <Fab
         color="primary"
         aria-label="add"
