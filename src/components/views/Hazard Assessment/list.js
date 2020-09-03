@@ -8,10 +8,15 @@ import {
   ListItemText,
   Fab,
   Button,
+  Grid,
 } from '@material-ui/core';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import AddIcon from '@material-ui/icons/Add';
+import {
+  Add as AddIcon,
+  KeyboardBackspace as BackIcon,
+  Edit as EditIcon,
+} from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import moment from 'moment';
 import { withFirebase } from '../../containers/FirebaseContext';
@@ -103,27 +108,37 @@ const HazardAssessmentList = props => {
           </Fab>
         </>
       ) : (
-        <>
-          <Button
-            variant="contained"
-            onClick={() => {
-              selectAHazardAssessment(null);
-            }}
-          >
-            Go Back
-          </Button>
-          {!editable && (
+        <Grid container justify="flex-start" spacing={1}>
+          <Grid item>
             <Button
               variant="contained"
+              color="default"
+              startIcon={<BackIcon />}
               onClick={() => {
-                updateEditable(true);
+                selectAHazardAssessment(null);
+                updateEditable(false);
               }}
             >
-              Edit
+              Go Back
             </Button>
+          </Grid>
+
+          {!editable && (
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                startIcon={<EditIcon />}
+                onClick={() => {
+                  updateEditable(true);
+                }}
+              >
+                Edit
+              </Button>
+            </Grid>
           )}
           <HazardAssessmentForm id={state.selectedHA} editable={editable} />
-        </>
+        </Grid>
       )}
     </Container>
   );
