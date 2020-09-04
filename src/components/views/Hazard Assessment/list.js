@@ -9,6 +9,7 @@ import {
   Fab,
   Button,
   Grid,
+  Typography,
 } from '@material-ui/core';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -79,22 +80,30 @@ const HazardAssessmentList = props => {
       {!state.selectedHA ? (
         <>
           <Paper>
-            <List dense>
-              {indexedAssessments.map(key => (
-                <ListItem
-                  button
-                  key={key}
-                  onClick={() => {
-                    selectAHazardAssessment(key);
-                  }}
-                >
-                  <ListItemText
-                    primary={hazardAssessments[key]?.project}
-                    secondary={moment(hazardAssessments[key]?.timeIn).fromNow()}
-                  />
-                </ListItem>
-              ))}
-            </List>
+            {indexedAssessments.length > 1 ? (
+              <List dense>
+                {indexedAssessments.map(key => (
+                  <ListItem
+                    button
+                    key={key}
+                    onClick={() => {
+                      selectAHazardAssessment(key);
+                    }}
+                  >
+                    <ListItemText
+                      primary={hazardAssessments[key]?.project}
+                      secondary={moment(
+                        hazardAssessments[key]?.timeIn
+                      ).fromNow()}
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body1" component="p">
+                There aren&apos;t any Hazard Assessment Forms
+              </Typography>
+            )}
           </Paper>
           <Fab
             color="primary"
