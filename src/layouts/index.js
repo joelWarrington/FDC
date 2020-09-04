@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import getFirebase from '../firebase';
 import FirebaseContext from '../components/containers/FirebaseContext';
+import '../reset.css';
 
 class Layout extends Component {
   state = {

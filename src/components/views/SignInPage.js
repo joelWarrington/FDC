@@ -42,7 +42,7 @@ const useStyles = theme => {
     },
     bg_image: {
       height: '100vh',
-      img: {
+      '& img': {
         objectFit: 'cover',
       },
     },
