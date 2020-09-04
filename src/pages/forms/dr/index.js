@@ -1,6 +1,11 @@
 import React from 'react';
 import Layout from '../../../components/containers/Layout';
+import DailyReportList from '../../../components/views/Daily Report/list';
 
-const DailyReportPage = () => <Layout></Layout>;
+const DailyReportListPage = () => (
+  <Layout>
+    <DailyReportList />
+  </Layout>
+);
 
-export default DailyReportPage;
+export default DailyReportListPage;

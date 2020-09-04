@@ -1,5 +1,6 @@
 import React from 'react';
-import { Container } from '@material-ui/core';
+import { Container, Button } from '@material-ui/core';
+import { KeyboardBackspace as BackIcon } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -11,17 +12,6 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4),
     marginBottom: theme.spacing(4),
   },
-  paper: {
-    padding: theme.spacing(2),
-  },
-  stepperButtons: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(4),
-  },
-  divider: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(2),
-  },
 }));
 
 const HazardAssessmentNewForm = props => {
@@ -30,6 +20,18 @@ const HazardAssessmentNewForm = props => {
 
   return (
     <Container maxWidth="md" className={classes.root}>
+      <Button
+        variant="contained"
+        color="default"
+        startIcon={<BackIcon />}
+        onClick={() => {
+          if (window) {
+            window.history.back();
+          }
+        }}
+      >
+        Go Back
+      </Button>
       <HazardAssessmentForm editable stepped />
     </Container>
   );

@@ -1,6 +1,11 @@
 import React from 'react';
 import Layout from '../../../components/containers/Layout';
+import RequestForInformationNewForm from '../../../components/views/Request For Information/new';
 
-const IndexPage = () => <Layout></Layout>;
+const RequestForInformationNewFormPage = () => (
+  <Layout>
+    <RequestForInformationNewForm />
+  </Layout>
+);
 
-export default IndexPage;
+export default RequestForInformationNewFormPage;

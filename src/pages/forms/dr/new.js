@@ -1,6 +1,11 @@
 import React from 'react';
 import Layout from '../../../components/containers/Layout';
+import DailyReportNewForm from '../../../components/views/Daily Report/new';
 
-const IndexPage = () => <Layout></Layout>;
+const DailyReportNewFormPage = () => (
+  <Layout>
+    <DailyReportNewForm />
+  </Layout>
+);
 
-export default IndexPage;
+export default DailyReportNewFormPage;
