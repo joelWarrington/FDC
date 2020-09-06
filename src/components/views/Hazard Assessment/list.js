@@ -53,7 +53,7 @@ const HazardAssessmentList = props => {
   const classes = useStyles(theme);
   const [hazardAssessments, updateHazardAssessments] = useState({});
   const [indexedAssessments, setIndexedAssessments] = useState([]);
-  const [editable, updateEditable] = useState(false);
+  const [disabled, updateDisabled] = useState(true);
 
   useEffect(() => {
     const hazardAssessmentListRef = firebase.database().ref('JHA');
@@ -125,28 +125,28 @@ const HazardAssessmentList = props => {
               startIcon={<BackIcon />}
               onClick={() => {
                 selectAHazardAssessment(null);
-                updateEditable(false);
+                updateDisabled(true);
               }}
             >
               Go Back
             </Button>
           </Grid>
 
-          {!editable && (
+          {disabled && (
             <Grid item>
               <Button
                 variant="contained"
                 color="primary"
                 startIcon={<EditIcon />}
                 onClick={() => {
-                  updateEditable(true);
+                  updateDisabled(false);
                 }}
               >
                 Edit
               </Button>
             </Grid>
           )}
-          <HazardAssessmentForm id={state.selectedHA} editable={editable} />
+          <HazardAssessmentForm id={state.selectedHA} disabled={disabled} />
         </Grid>
       )}
     </Container>

@@ -25,6 +25,7 @@ import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 import OrangeRadio from '../../atoms/OrangeRadioButton';
 import { withFirebase } from '../../containers/FirebaseContext';
+import { updateCurrentHazardAssessment } from '../../../state/app';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,7 +48,16 @@ const useStyles = makeStyles(theme => ({
 const HazardAssessmentForm = props => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { firebase, id, stepped, editable } = props;
+  const {
+    firebase,
+    id,
+    stepped,
+    disabled,
+    updateHazardAssessment,
+    state,
+  } = props;
+
+  const { currentHazardAssessment } = state;
 
   const [activeStep, updateActiveStep] = useState(0);
   const [steps, updateSteps] = useState([
@@ -56,81 +66,65 @@ const HazardAssessmentForm = props => {
     'PPE',
   ]);
   const [projects, updateProjects] = useState(['Project 1', 'Project 2']);
-  const [project, updateProject] = useState('');
-  const [timeIn, updateTimeIn] = useState(
-    moment().format('YYYY-MM-DD[T]HH:mm')
-  );
-  const [location, updateLocation] = useState({
-    latitude: '',
-    longitude: '',
-  });
-  const [ownerOnSite, updateOwnerOnSite] = useState(false);
-  const [mitigationSteps, updateMitigationSteps] = useState('');
-  const [hazards, updateHazards] = useState([
-    { label: 'COVID-19', name: 'covid19', risk: 'N/A' },
-    { label: 'Heights Over 3 Meters', name: 'heights', risk: 'N/A' },
-    { label: 'Hot Materials', name: 'hot-materials', risk: 'N/A' },
-    { label: 'Open Flame', name: 'open-flame', risk: 'N/A' },
-    { label: 'Debris', name: 'debris', risk: 'N/A' },
-    { label: 'Chemical Hazards', name: 'chemical', risk: 'N/A' },
-    { label: 'Biological Hazards', name: 'biological', risk: 'N/A' },
-    { label: 'Inadequate Lighting', name: 'lighting', risk: 'N/A' },
-    { label: 'Confined Spaces', name: 'confined-spaces', risk: 'N/A' },
-    { label: 'Weather Conditions', name: 'weather-conditions', risk: 'N/A' },
-    { label: 'Moving Equipment', name: 'moving-equipment', risk: 'N/A' },
-  ]);
-  const [miscHazards, updateMiscHazards] = useState([
-    { label: 'Natural Gas is on', checked: true },
-    { label: 'Propane is on', checked: true },
-    { label: 'Water is on', checked: true },
-    { label: 'Structure is intact', checked: true },
-    { label: 'Site is secure', checked: true },
-  ]);
-  const [PPE, updatePPE] = useState([
-    { label: 'Hard Hat', checked: false },
-    { label: 'Steel Toe Boots', checked: false },
-    { label: 'High Visibility Vest', checked: false },
-    { label: 'Eye Protection', checked: false },
-  ]);
-  const [specializedPPERequired, updateSpecializedPPERequired] = useState(
-    false
-  );
-  const [specializedPPE, updateSpecializedPPE] = useState([
-    { label: 'Tool Lanyards', checked: false },
-    { label: 'Hearing (Ear Plugs or Muffs)', checked: false },
-    { label: 'Respiratory', checked: false },
-    { label: 'Hand Protection', checked: false },
-    { label: 'Gas Monitors', checked: false },
-  ]);
-  const [isItSafeToProceed, updateIsItSafeToProceed] = useState(false);
-  const [safeToProceedExplanation, updateSafeToProceedExplanation] = useState(
-    ''
-  );
 
   useEffect(() => {
+    updateHazardAssessment({
+      project: '',
+      timeIn: moment().format('YYYY-MM-DD[T]HH:mm'),
+      location: {
+        latitude: '',
+        longitude: '',
+      },
+      ownerOnSite: false,
+      mitigationSteps: '',
+      hazards: [
+        { label: 'COVID-19', name: 'covid19', risk: 'N/A' },
+        { label: 'Heights Over 3 Meters', name: 'heights', risk: 'N/A' },
+        { label: 'Hot Materials', name: 'hot-materials', risk: 'N/A' },
+        { label: 'Open Flame', name: 'open-flame', risk: 'N/A' },
+        { label: 'Debris', name: 'debris', risk: 'N/A' },
+        { label: 'Chemical Hazards', name: 'chemical', risk: 'N/A' },
+        { label: 'Biological Hazards', name: 'biological', risk: 'N/A' },
+        { label: 'Inadequate Lighting', name: 'lighting', risk: 'N/A' },
+        { label: 'Confined Spaces', name: 'confined-spaces', risk: 'N/A' },
+        {
+          label: 'Weather Conditions',
+          name: 'weather-conditions',
+          risk: 'N/A',
+        },
+        { label: 'Moving Equipment', name: 'moving-equipment', risk: 'N/A' },
+      ],
+      miscHazards: [
+        { label: 'Natural Gas is on', checked: true },
+        { label: 'Propane is on', checked: true },
+        { label: 'Water is on', checked: true },
+        { label: 'Structure is intact', checked: true },
+        { label: 'Site is secure', checked: true },
+      ],
+      PPE: [
+        { label: 'Hard Hat', checked: false },
+        { label: 'Steel Toe Boots', checked: false },
+        { label: 'High Visibility Vest', checked: false },
+        { label: 'Eye Protection', checked: false },
+      ],
+      specializedPPERequired: false,
+      specializedPPE: [
+        { label: 'Tool Lanyards', checked: false },
+        { label: 'Hearing (Ear Plugs or Muffs)', checked: false },
+        { label: 'Respiratory', checked: false },
+        { label: 'Hand Protection', checked: false },
+        { label: 'Gas Monitors', checked: false },
+      ],
+      isItSafeToProceed: false,
+      safeToProceedExplanation: '',
+    });
     if (id !== null) {
-      const hazardAssessmentRef = firebase.database().ref(`/JHA/${id}`);
-      hazardAssessmentRef.once('value', snapshot => {
-        const hazardAssessmentSnapshot = snapshot.val();
-        if (hazardAssessmentSnapshot !== null) {
-          updateProject(hazardAssessmentSnapshot.project);
-          updateTimeIn(hazardAssessmentSnapshot.timeIn);
-          updateLocation(hazardAssessmentSnapshot.location);
-          updateOwnerOnSite(hazardAssessmentSnapshot.ownerOnSite);
-          updateMitigationSteps(hazardAssessmentSnapshot.mitigationSteps);
-          updateHazards(hazardAssessmentSnapshot.hazards);
-          updateMiscHazards(hazardAssessmentSnapshot.miscHazards);
-          updatePPE(hazardAssessmentSnapshot.PPE);
-          updateSpecializedPPERequired(
-            hazardAssessmentSnapshot.specializedPPERequired
-          );
-          updateSpecializedPPE(hazardAssessmentSnapshot.specializedPPE);
-          updateIsItSafeToProceed(hazardAssessmentSnapshot.isItSafeToProceed);
-          updateSafeToProceedExplanation(
-            hazardAssessmentSnapshot.safeToProceedExplanation
-          );
-        }
-      });
+      firebase
+        .database()
+        .ref(`/JHA/${id}`)
+        .once('value', snapshot => {
+          updateHazardAssessment(snapshot.val());
+        });
     }
   }, [id]);
 
@@ -145,18 +139,7 @@ const HazardAssessmentForm = props => {
       .ref(`/JHA/${submissionID}`)
       .set({
         user: currentUserID,
-        project,
-        timeIn,
-        location,
-        ownerOnSite,
-        mitigationSteps,
-        hazards,
-        miscHazards,
-        PPE,
-        specializedPPERequired,
-        specializedPPE,
-        isItSafeToProceed,
-        safeToProceedExplanation,
+        ...currentHazardAssessment,
       })
       .then(() => {
         navigate('/forms/ha');
@@ -169,11 +152,14 @@ const HazardAssessmentForm = props => {
         <Grid item>
           <Autocomplete
             options={projects}
-            value={project}
+            value={currentHazardAssessment.project}
             onChange={evt => {
-              updateProject(projects[evt.target.value]);
+              updateHazardAssessment({
+                ...currentHazardAssessment,
+                projects: [evt.target.value],
+              });
             }}
-            disabled={!editable}
+            disabled={disabled}
             renderInput={params => (
               <TextField {...params} label="Project" variant="outlined" />
             )}
@@ -184,11 +170,14 @@ const HazardAssessmentForm = props => {
             id="datetime-local"
             label="Time In"
             type="datetime-local"
-            value={timeIn}
+            value={currentHazardAssessment.timeIn}
             onChange={evt => {
-              updateTimeIn(evt.target.value);
+              updateHazardAssessment({
+                ...currentHazardAssessment,
+                timeIn: [evt.target.value],
+              });
             }}
-            disabled={!editable}
+            disabled={disabled}
             InputLabelProps={{
               shrink: true,
             }}
@@ -198,27 +187,34 @@ const HazardAssessmentForm = props => {
           <FormControlLabel
             control={<Switch color="primary" />}
             label="Client/Owner on Site"
-            checked={ownerOnSite}
-            disabled={!editable}
+            checked={currentHazardAssessment.ownerOnSite}
+            disabled={disabled}
             onChange={() => {
-              updateOwnerOnSite(!ownerOnSite);
+              updateHazardAssessment({
+                ...currentHazardAssessment,
+                ownerOnSite: !currentHazardAssessment.ownerOnSite,
+              });
             }}
           />
         </Grid>
       </Grid>
       <Divider variant="middle" className={classes.divider} />
       <Grid container spacing={2}>
-        {editable && (
+        {!disabled && (
           <Grid item>
             <Button
               variant="outlined"
               color="primary"
-              disabled={!editable}
+              disabled={disabled}
               onClick={() => {
                 navigator.geolocation.getCurrentPosition(position => {
-                  updateLocation({
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
+                  const { latitude, longitude } = position.coords;
+                  updateHazardAssessment({
+                    ...currentHazardAssessment,
+                    location: {
+                      latitude,
+                      longitude,
+                    },
                   });
                 });
               }}
@@ -227,13 +223,12 @@ const HazardAssessmentForm = props => {
             </Button>
           </Grid>
         )}
-
         <Grid item>
           <TextField
             disabled
             label="Longitude"
             variant="outlined"
-            value={location.longitude}
+            value={currentHazardAssessment?.location?.longitude}
           />
         </Grid>
         <Grid item>
@@ -241,7 +236,7 @@ const HazardAssessmentForm = props => {
             disabled
             label="Latitude"
             variant="outlined"
-            value={location.latitude}
+            value={currentHazardAssessment?.location?.latitude}
           />
         </Grid>
       </Grid>
@@ -250,18 +245,25 @@ const HazardAssessmentForm = props => {
   const hazardIdentificationSection = () => (
     <>
       <Grid container spacing={2}>
-        {miscHazards.map((miscHazard, index) => (
+        {currentHazardAssessment.miscHazards?.map((miscHazard, index) => (
           <Grid item xs={6} sm={3} key={miscHazard.label}>
             <FormControlLabel
               control={<Switch color="primary" />}
               label={miscHazard.label}
               checked={miscHazard.checked}
-              disabled={!editable}
-              onChange={evt => {
-                console.log(evt.target);
-                const newMiscHazards = [...miscHazards];
-                newMiscHazards[index].checked = !newMiscHazards[index].checked;
-                updateMiscHazards(newMiscHazards);
+              disabled={disabled}
+              onChange={() => {
+                updateHazardAssessment({
+                  ...currentHazardAssessment,
+                  miscHazards: currentHazardAssessment.miscHazards.map(
+                    (hazard, hazardIndex) => {
+                      if (index === hazardIndex) {
+                        return { ...hazard, checked: !hazard.checked };
+                      }
+                      return hazard;
+                    }
+                  ),
+                });
               }}
             />
           </Grid>
@@ -269,7 +271,7 @@ const HazardAssessmentForm = props => {
       </Grid>
       <Divider className={classes.divider} />
       <Grid container spacing={2} justify="space-between">
-        {hazards.map((hazard, index) => (
+        {currentHazardAssessment.hazards?.map((hazard, index) => (
           <Grid item key={hazard.name}>
             <FormControl component="fieldset" margin="normal">
               <FormLabel component="legend">{hazard.label}</FormLabel>
@@ -279,31 +281,42 @@ const HazardAssessmentForm = props => {
                 name={hazard.name}
                 value={hazard.risk}
                 onChange={evt => {
-                  const newHazards = [...hazards];
-                  newHazards[index].risk = evt.target.value;
-                  updateHazards(newHazards);
+                  updateHazardAssessment({
+                    ...currentHazardAssessment,
+                    hazards: currentHazardAssessment.hazards.map(
+                      (currentHazard, currentHazardIndex) => {
+                        if (index === currentHazardIndex) {
+                          return {
+                            ...currentHazard,
+                            risk: evt.target.value,
+                          };
+                        }
+                        return currentHazard;
+                      }
+                    ),
+                  });
                 }}
               >
                 <FormControlLabel
-                  disabled={!editable}
+                  disabled={disabled}
                   value="N/A"
                   control={<OrangeRadio />}
                   label="N/A"
                 />
                 <FormControlLabel
-                  disabled={!editable}
+                  disabled={disabled}
                   value="Minor"
                   control={<OrangeRadio />}
                   label="Minor"
                 />
                 <FormControlLabel
-                  disabled={!editable}
+                  disabled={disabled}
                   value="Moderate"
                   control={<OrangeRadio />}
                   label="Moderate"
                 />
                 <FormControlLabel
-                  disabled={!editable}
+                  disabled={disabled}
                   value="Severe"
                   control={<OrangeRadio />}
                   label="Severe"
@@ -315,15 +328,18 @@ const HazardAssessmentForm = props => {
       </Grid>
       <TextField
         label="Mitigation Steps"
-        disabled={!editable}
+        disabled={disabled}
         fullWidth
         helperText="How will you mitigate the risks above"
         variant="outlined"
         multiline
         rows={5}
-        value={mitigationSteps}
+        value={currentHazardAssessment.mitigationSteps}
         onChange={evt => {
-          updateMitigationSteps(evt.target.value);
+          updateHazardAssessment({
+            ...currentHazardAssessment,
+            mitigationSteps: evt.target.value,
+          });
         }}
       />
     </>
@@ -332,17 +348,28 @@ const HazardAssessmentForm = props => {
   const PPESection = () => (
     <>
       <Grid container spacing={2} justify="space-between">
-        {PPE.map((currentPPE, index) => (
+        {currentHazardAssessment.PPE?.map((currentPPE, index) => (
           <Grid item xs={6} sm={3} key={currentPPE.label}>
             <FormControlLabel
               control={<Switch color="primary" />}
               label={currentPPE.label}
               checked={currentPPE.checked}
-              disabled={!editable}
+              disabled={disabled}
               onChange={() => {
-                const newPPE = [...PPE];
-                newPPE[index].checked = !PPE[index].checked;
-                updatePPE(newPPE);
+                updateHazardAssessment({
+                  ...currentHazardAssessment,
+                  PPE: currentHazardAssessment.PPE.map(
+                    (currentPPEquipment, currentPPEIndex) => {
+                      if (index === currentPPEIndex) {
+                        return {
+                          ...currentPPEquipment,
+                          checked: !currentPPEquipment.checked,
+                        };
+                      }
+                      return currentPPEquipment;
+                    }
+                  ),
+                });
               }}
             />
           </Grid>
@@ -351,26 +378,40 @@ const HazardAssessmentForm = props => {
       <FormControlLabel
         control={<Switch color="primary" />}
         label="Is Specialized PPE Required?"
-        checked={specializedPPERequired}
-        disabled={!editable}
+        checked={currentHazardAssessment.specializedPPERequired}
+        disabled={disabled}
         onChange={() => {
-          updateSpecializedPPERequired(!specializedPPERequired);
+          updateHazardAssessment({
+            ...currentHazardAssessment,
+            specializedPPERequired: !currentHazardAssessment.specializedPPERequired,
+          });
         }}
       />
       <Divider className={classes.divider} />
-      {specializedPPERequired && (
+      {currentHazardAssessment.specializedPPERequired && (
         <>
           <Grid container spacing={2} justify="space-between">
-            {specializedPPE.map((currentPPE, index) => (
+            {currentHazardAssessment.specializedPPE.map((currentPPE, index) => (
               <Grid item xs={6} sm={3} key={currentPPE.label}>
                 <FormControlLabel
-                  control={<Switch color="primary" disabled={!editable} />}
+                  control={<Switch color="primary" disabled={disabled} />}
                   label={currentPPE.label}
                   checked={currentPPE.checked}
                   onChange={() => {
-                    const newPPE = [...specializedPPE];
-                    newPPE[index].checked = !specializedPPE[index].checked;
-                    updateSpecializedPPE(newPPE);
+                    updateHazardAssessment({
+                      ...currentHazardAssessment,
+                      specializedPPE: currentHazardAssessment.specializedPPE.map(
+                        (currentPPEquipment, currentPPEIndex) => {
+                          if (index === currentPPEIndex) {
+                            return {
+                              ...currentPPEquipment,
+                              checked: !currentPPEquipment.checked,
+                            };
+                          }
+                          return currentPPEquipment;
+                        }
+                      ),
+                    });
                   }}
                 />
               </Grid>
@@ -382,13 +423,16 @@ const HazardAssessmentForm = props => {
       <FormControlLabel
         control={<Switch color="primary" />}
         label="Is It Safe To Proceed?"
-        checked={isItSafeToProceed}
-        disabled={!editable}
+        checked={currentHazardAssessment.isItSafeToProceed}
+        disabled={disabled}
         onChange={() => {
-          updateIsItSafeToProceed(!isItSafeToProceed);
+          updateHazardAssessment({
+            ...currentHazardAssessment,
+            isItSafeToProceed: !currentHazardAssessment.isItSafeToProceed,
+          });
         }}
       />
-      {!isItSafeToProceed && (
+      {!currentHazardAssessment.isItSafeToProceed && (
         <TextField
           label="Explanation"
           fullWidth
@@ -396,10 +440,13 @@ const HazardAssessmentForm = props => {
           variant="outlined"
           multiline
           rows={5}
-          disabled={!editable}
-          value={safeToProceedExplanation}
+          disabled={disabled}
+          value={currentHazardAssessment.safeToProceedExplanation}
           onChange={evt => {
-            updateSafeToProceedExplanation(evt.target.value);
+            updateHazardAssessment({
+              ...currentHazardAssessment,
+              safeToProceedExplanation: evt.target.value,
+            });
           }}
         />
       )}
@@ -474,7 +521,7 @@ const HazardAssessmentForm = props => {
           >
             <Grid item>
               <Button
-                disabled={!editable}
+                disabled={!disabled}
                 variant="contained"
                 color="primary"
                 onClick={() => {
@@ -494,18 +541,26 @@ const HazardAssessmentForm = props => {
 HazardAssessmentForm.defaultProps = {
   id: null,
   stepped: false,
-  editable: false,
+  disabled: false,
 };
 
 HazardAssessmentForm.propTypes = {
   id: PropTypes.string,
   stepped: PropTypes.bool,
-  editable: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
-const mapStateToProps = (_state, ownProps) => ({ ...ownProps });
+const mapStateToProps = (_state, ownProps) => ({
+  ...ownProps,
+  state: _state.app,
+});
+
+const mapDispatchToProps = dispatch => ({
+  updateHazardAssessment: payload =>
+    dispatch(updateCurrentHazardAssessment(payload)),
+});
 
 export default compose(
-  connect(mapStateToProps),
+  connect(mapStateToProps, mapDispatchToProps),
   withFirebase
 )(HazardAssessmentForm);

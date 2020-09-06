@@ -32,7 +32,7 @@ const HazardAssessmentNewForm = props => {
       >
         Go Back
       </Button>
-      <HazardAssessmentForm editable stepped />
+      <HazardAssessmentForm stepped />
     </Container>
   );
 };
