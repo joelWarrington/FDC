@@ -257,7 +257,8 @@ const HazardAssessmentForm = props => {
               label={miscHazard.label}
               checked={miscHazard.checked}
               disabled={!editable}
-              onChange={() => {
+              onChange={evt => {
+                console.log(evt.target);
                 const newMiscHazards = [...miscHazards];
                 newMiscHazards[index].checked = !newMiscHazards[index].checked;
                 updateMiscHazards(newMiscHazards);
