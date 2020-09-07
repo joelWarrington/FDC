@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
 import getFirebase from '../firebase';
 import FirebaseContext from '../components/containers/FirebaseContext';
 import '../reset.css';
@@ -37,7 +39,9 @@ class Layout extends Component {
 
     return (
       <FirebaseContext.Provider value={firebase}>
-        {children}
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+          {children}
+        </MuiPickersUtilsProvider>
       </FirebaseContext.Provider>
     );
   };

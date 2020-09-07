@@ -15,6 +15,19 @@ import {
   Paper,
   Grid,
   Divider,
+  Checkbox,
+  Toolbar,
+  Typography,
+  Table,
+  TableContainer,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableCell,
+  Card,
+  CardContent,
+  CardActions,
+  useMediaQuery,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import moment from 'moment';
@@ -23,9 +36,15 @@ import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
+import { DateTimePicker } from '@material-ui/pickers';
+import {
+  LocationOn as LocationOnIcon,
+  LocationOff as LocationOffIcon,
+} from '@material-ui/icons';
 import OrangeRadio from '../../atoms/OrangeRadioButton';
 import { withFirebase } from '../../containers/FirebaseContext';
 import { updateCurrentHazardAssessment } from '../../../state/app';
+import { hazardAssessmentDefaultValues } from '../../../formDefaults';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -42,6 +61,14 @@ const useStyles = makeStyles(theme => ({
   divider: {
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
+  },
+  card_item: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  card_content: {
+    flexGrow: 1,
   },
 }));
 
@@ -66,58 +93,11 @@ const HazardAssessmentForm = props => {
     'PPE',
   ]);
   const [projects, updateProjects] = useState(['Project 1', 'Project 2']);
+  const [stations, updateStations] = useState(['Station 1', 'Station 2']);
+  const isMobile = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
-    updateHazardAssessment({
-      project: '',
-      timeIn: moment().format('YYYY-MM-DD[T]HH:mm'),
-      location: {
-        latitude: '',
-        longitude: '',
-      },
-      ownerOnSite: false,
-      mitigationSteps: '',
-      hazards: [
-        { label: 'COVID-19', name: 'covid19', risk: 'N/A' },
-        { label: 'Heights Over 3 Meters', name: 'heights', risk: 'N/A' },
-        { label: 'Hot Materials', name: 'hot-materials', risk: 'N/A' },
-        { label: 'Open Flame', name: 'open-flame', risk: 'N/A' },
-        { label: 'Debris', name: 'debris', risk: 'N/A' },
-        { label: 'Chemical Hazards', name: 'chemical', risk: 'N/A' },
-        { label: 'Biological Hazards', name: 'biological', risk: 'N/A' },
-        { label: 'Inadequate Lighting', name: 'lighting', risk: 'N/A' },
-        { label: 'Confined Spaces', name: 'confined-spaces', risk: 'N/A' },
-        {
-          label: 'Weather Conditions',
-          name: 'weather-conditions',
-          risk: 'N/A',
-        },
-        { label: 'Moving Equipment', name: 'moving-equipment', risk: 'N/A' },
-      ],
-      miscHazards: [
-        { label: 'Natural Gas is on', checked: true },
-        { label: 'Propane is on', checked: true },
-        { label: 'Water is on', checked: true },
-        { label: 'Structure is intact', checked: true },
-        { label: 'Site is secure', checked: true },
-      ],
-      PPE: [
-        { label: 'Hard Hat', checked: false },
-        { label: 'Steel Toe Boots', checked: false },
-        { label: 'High Visibility Vest', checked: false },
-        { label: 'Eye Protection', checked: false },
-      ],
-      specializedPPERequired: false,
-      specializedPPE: [
-        { label: 'Tool Lanyards', checked: false },
-        { label: 'Hearing (Ear Plugs or Muffs)', checked: false },
-        { label: 'Respiratory', checked: false },
-        { label: 'Hand Protection', checked: false },
-        { label: 'Gas Monitors', checked: false },
-      ],
-      isItSafeToProceed: false,
-      safeToProceedExplanation: '',
-    });
+    updateHazardAssessment(hazardAssessmentDefaultValues);
     if (id !== null) {
       firebase
         .database()
@@ -149,14 +129,30 @@ const HazardAssessmentForm = props => {
   const projectSection = () => (
     <>
       <Grid container spacing={2} justify="space-between">
-        <Grid item>
+        <Grid item xs={12}>
+          <DateTimePicker
+            label="Submission Date"
+            inputVariant="outlined"
+            autoOk
+            disabled
+            fullWidth
+            value={currentHazardAssessment.submissionDate}
+            onChange={evt => {
+              updateHazardAssessment({
+                ...currentHazardAssessment,
+                submissionDate: [evt.target.value],
+              });
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={6}>
           <Autocomplete
             options={projects}
             value={currentHazardAssessment.project}
             onChange={evt => {
               updateHazardAssessment({
                 ...currentHazardAssessment,
-                projects: [evt.target.value],
+                project: projects[evt.target.value],
               });
             }}
             disabled={disabled}
@@ -165,75 +161,91 @@ const HazardAssessmentForm = props => {
             )}
           />
         </Grid>
-        <Grid item>
-          <TextField
-            id="datetime-local"
-            label="Time In"
-            type="datetime-local"
-            value={currentHazardAssessment.timeIn}
+        <Grid item xs={12} md={6}>
+          <Autocomplete
+            options={stations}
+            value={currentHazardAssessment.project}
             onChange={evt => {
               updateHazardAssessment({
                 ...currentHazardAssessment,
-                timeIn: [evt.target.value],
+                station: stations[evt.target.value],
               });
             }}
             disabled={disabled}
-            InputLabelProps={{
-              shrink: true,
-            }}
-          />
-        </Grid>
-        <Grid item>
-          <FormControlLabel
-            control={<Switch color="primary" />}
-            label="Client/Owner on Site"
-            checked={currentHazardAssessment.ownerOnSite}
-            disabled={disabled}
-            onChange={() => {
-              updateHazardAssessment({
-                ...currentHazardAssessment,
-                ownerOnSite: !currentHazardAssessment.ownerOnSite,
-              });
-            }}
+            getOptionLabel={option => option}
+            renderInput={params => (
+              <TextField {...params} label="Station" variant="outlined" />
+            )}
           />
         </Grid>
       </Grid>
       <Divider variant="middle" className={classes.divider} />
-      <Grid container spacing={2}>
+      <Grid container spacing={2} justify="space-between">
         {!disabled && (
-          <Grid item>
-            <Button
-              variant="outlined"
-              color="primary"
-              disabled={disabled}
-              onClick={() => {
-                navigator.geolocation.getCurrentPosition(position => {
-                  const { latitude, longitude } = position.coords;
-                  updateHazardAssessment({
-                    ...currentHazardAssessment,
-                    location: {
-                      latitude,
-                      longitude,
-                    },
+          <>
+            <Grid item xs={12} md={6}>
+              <Button
+                variant="outlined"
+                color="primary"
+                disabled={disabled}
+                fullWidth
+                size="large"
+                startIcon={<LocationOnIcon />}
+                onClick={() => {
+                  navigator.geolocation.getCurrentPosition(position => {
+                    const { latitude, longitude } = position.coords;
+                    updateHazardAssessment({
+                      ...currentHazardAssessment,
+                      location: {
+                        latitude,
+                        longitude,
+                      },
+                    });
                   });
-                });
-              }}
-            >
-              Get Location
-            </Button>
-          </Grid>
+                }}
+              >
+                Get Location
+              </Button>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              {(currentHazardAssessment?.location?.latitude ||
+                currentHazardAssessment?.location?.longitude) && (
+                <Button
+                  variant="outlined"
+                  color="default"
+                  disabled={disabled}
+                  fullWidth
+                  size="large"
+                  startIcon={<LocationOffIcon />}
+                  onClick={() => {
+                    updateHazardAssessment({
+                      ...currentHazardAssessment,
+                      location: {
+                        latitude: '',
+                        longitude: '',
+                      },
+                    });
+                  }}
+                >
+                  Remove Location
+                </Button>
+              )}
+            </Grid>
+          </>
         )}
-        <Grid item>
+        <Grid item xs={6} md={6}>
           <TextField
             disabled
+            fullWidth
             label="Longitude"
             variant="outlined"
             value={currentHazardAssessment?.location?.longitude}
           />
         </Grid>
-        <Grid item>
+        <Grid item xs={6} md={6}>
           <TextField
             disabled
+            fullWidth
             label="Latitude"
             variant="outlined"
             value={currentHazardAssessment?.location?.latitude}
@@ -245,10 +257,26 @@ const HazardAssessmentForm = props => {
   const hazardIdentificationSection = () => (
     <>
       <Grid container spacing={2}>
+        <Grid item xs={6} sm={3}>
+          <FormControlLabel
+            control={<Switch color="primary" />}
+            label="Client/Owner on Site"
+            checked={currentHazardAssessment.ownerOnSite}
+            disabled={disabled}
+            fullWidth
+            onChange={() => {
+              updateHazardAssessment({
+                ...currentHazardAssessment,
+                ownerOnSite: !currentHazardAssessment.ownerOnSite,
+              });
+            }}
+          />
+        </Grid>
         {currentHazardAssessment.miscHazards?.map((miscHazard, index) => (
           <Grid item xs={6} sm={3} key={miscHazard.label}>
             <FormControlLabel
               control={<Switch color="primary" />}
+              fullWidth
               label={miscHazard.label}
               checked={miscHazard.checked}
               disabled={disabled}
@@ -347,79 +375,117 @@ const HazardAssessmentForm = props => {
 
   const PPESection = () => (
     <>
-      <Grid container spacing={2} justify="space-between">
-        {currentHazardAssessment.PPE?.map((currentPPE, index) => (
-          <Grid item xs={6} sm={3} key={currentPPE.label}>
-            <FormControlLabel
-              control={<Switch color="primary" />}
-              label={currentPPE.label}
-              checked={currentPPE.checked}
-              disabled={disabled}
-              onChange={() => {
-                updateHazardAssessment({
-                  ...currentHazardAssessment,
-                  PPE: currentHazardAssessment.PPE.map(
-                    (currentPPEquipment, currentPPEIndex) => {
-                      if (index === currentPPEIndex) {
-                        return {
-                          ...currentPPEquipment,
-                          checked: !currentPPEquipment.checked,
-                        };
-                      }
-                      return currentPPEquipment;
-                    }
-                  ),
-                });
-              }}
-            />
+      {!disabled && (
+        <Grid container spacing={2} justify="space-between">
+          <Grid item xs={12} md={4}>
+            <Card variant="outlined" className={classes.card_item}>
+              <CardContent className={classes.card_content}>
+                <Typography variant="h6" gutterBottom>
+                  Personal Protective Equipment
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Used as last line of protection against hazards. Not sure what
+                  you should be wearing? Find out before getting on site.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  href="https://www.ccohs.ca/teach_tools/phys_hazards/ppe.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Learn More
+                </Button>
+              </CardActions>
+            </Card>
           </Grid>
-        ))}
-      </Grid>
-      <FormControlLabel
-        control={<Switch color="primary" />}
-        label="Is Specialized PPE Required?"
-        checked={currentHazardAssessment.specializedPPERequired}
-        disabled={disabled}
-        onChange={() => {
-          updateHazardAssessment({
-            ...currentHazardAssessment,
-            specializedPPERequired: !currentHazardAssessment.specializedPPERequired,
-          });
-        }}
-      />
-      <Divider className={classes.divider} />
-      {currentHazardAssessment.specializedPPERequired && (
-        <>
-          <Grid container spacing={2} justify="space-between">
-            {currentHazardAssessment.specializedPPE.map((currentPPE, index) => (
-              <Grid item xs={6} sm={3} key={currentPPE.label}>
-                <FormControlLabel
-                  control={<Switch color="primary" disabled={disabled} />}
-                  label={currentPPE.label}
-                  checked={currentPPE.checked}
-                  onChange={() => {
-                    updateHazardAssessment({
-                      ...currentHazardAssessment,
-                      specializedPPE: currentHazardAssessment.specializedPPE.map(
-                        (currentPPEquipment, currentPPEIndex) => {
-                          if (index === currentPPEIndex) {
-                            return {
-                              ...currentPPEquipment,
-                              checked: !currentPPEquipment.checked,
-                            };
-                          }
-                          return currentPPEquipment;
-                        }
-                      ),
-                    });
-                  }}
-                />
-              </Grid>
-            ))}
+          <Grid item xs={12} md={4}>
+            <Card variant="outlined" className={classes.card_item}>
+              <CardContent className={classes.card_content}>
+                <Typography variant="h6" gutterBottom>
+                  Get Hurt?
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Seek medical attention and submit an incident report to
+                  prevent future occurences.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                {/* <Button size="small">Submit Form</Button> */}
+              </CardActions>
+            </Card>
           </Grid>
-          <Divider className={classes.divider} />
-        </>
+          <Grid item xs={12} md={4}>
+            <Card variant="outlined" className={classes.card_item}>
+              <CardContent className={classes.card_content}>
+                <Typography variant="h6" gutterBottom>
+                  Fall Protection
+                </Typography>
+                <Typography variant="body2" component="p">
+                  Use of controls designed to protect personnel from falling or
+                  in the event they do fall, to stop them without causing severe
+                  injury. Be aware of your fall protection plan & procedures.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  size="small"
+                  href="https://www.ccohs.ca/oshanswers/hsprograms/fall%20protection_general.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Learn More
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        </Grid>
       )}
+
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell padding="checkbox" />
+              <TableCell>Equipment</TableCell>
+              <TableCell>Description</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {currentHazardAssessment?.PPE?.map((currentPPE, PPEIndex) => (
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    color="primary"
+                    checked={currentPPE.checked}
+                    disabled={disabled}
+                    onChange={() => {
+                      updateHazardAssessment({
+                        ...currentHazardAssessment,
+                        PPE: currentHazardAssessment.PPE.map(
+                          (currentPPEquipment, currentPPEIndex) => {
+                            if (PPEIndex === currentPPEIndex) {
+                              return {
+                                ...currentPPEquipment,
+                                checked: !currentPPEquipment.checked,
+                              };
+                            }
+                            return currentPPEquipment;
+                          }
+                        ),
+                      });
+                    }}
+                  />
+                </TableCell>
+                <TableCell>{currentPPE.name}</TableCell>
+                <TableCell>{currentPPE.description}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
       <FormControlLabel
         control={<Switch color="primary" />}
         label="Is It Safe To Proceed?"
@@ -457,7 +523,10 @@ const HazardAssessmentForm = props => {
     <div className={classes.root}>
       {stepped ? (
         <>
-          <Stepper activeStep={activeStep} alternativeLabel>
+          <Stepper
+            activeStep={activeStep}
+            orientation={isMobile ? 'vertical' : 'horizontal'}
+          >
             {steps.map(step => (
               <Step key={step}>
                 <StepLabel>{step}</StepLabel>
@@ -499,6 +568,7 @@ const HazardAssessmentForm = props => {
                   } else {
                     formSubmission();
                   }
+                  window.scrollTo(0, 0);
                 }}
               >
                 {activeStep === steps.length - 1 ? 'Submit' : 'Next'}
@@ -521,11 +591,12 @@ const HazardAssessmentForm = props => {
           >
             <Grid item>
               <Button
-                disabled={!disabled}
+                disabled={disabled}
                 variant="contained"
                 color="primary"
                 onClick={() => {
                   formSubmission();
+                  window.scrollTo(0, 0);
                 }}
               >
                 Submit
