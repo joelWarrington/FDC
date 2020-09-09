@@ -164,7 +164,7 @@ const HazardAssessmentForm = props => {
         <Grid item xs={12} md={6}>
           <Autocomplete
             options={stations}
-            value={currentHazardAssessment.project}
+            value={currentHazardAssessment.station}
             onChange={evt => {
               updateHazardAssessment({
                 ...currentHazardAssessment,

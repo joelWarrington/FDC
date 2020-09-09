@@ -10,6 +10,13 @@ import {
   Button,
   Grid,
   Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TableHead,
+  Avatar,
 } from '@material-ui/core';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
@@ -45,6 +52,9 @@ const useStyles = makeStyles(theme => ({
     bottom: theme.spacing(2),
     right: theme.spacing(2),
   },
+  tableRow: {
+    cursor: 'pointer',
+  },
 }));
 
 const HazardAssessmentList = props => {
@@ -54,6 +64,7 @@ const HazardAssessmentList = props => {
   const [hazardAssessments, updateHazardAssessments] = useState({});
   const [indexedAssessments, setIndexedAssessments] = useState([]);
   const [disabled, updateDisabled] = useState(true);
+  const [users, updateUsers] = useState({});
 
   useEffect(() => {
     const hazardAssessmentListRef = firebase.database().ref('JHA');
@@ -74,37 +85,70 @@ const HazardAssessmentList = props => {
         })
       );
     });
+    firebase
+      .database()
+      .ref(`users/`)
+      .once('value', snapshot => {
+        updateUsers(snapshot.val());
+      });
   }, []);
   return (
     <Container maxWidth="md" className={classes.root}>
       {!state.selectedHA ? (
         <>
-          <Paper>
-            {indexedAssessments.length > 1 ? (
-              <List dense>
-                {indexedAssessments.map(key => (
-                  <ListItem
-                    button
-                    key={key}
-                    onClick={() => {
-                      selectAHazardAssessment(key);
-                    }}
-                  >
-                    <ListItemText
-                      primary={hazardAssessments[key]?.project}
-                      secondary={moment(
-                        hazardAssessments[key]?.timeIn
-                      ).fromNow()}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            ) : (
-              <Typography variant="body1" component="p">
-                There aren&apos;t any Hazard Assessment Forms
-              </Typography>
-            )}
-          </Paper>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Project</TableCell>
+                  <TableCell>Station</TableCell>
+                  <TableCell>Submitted By</TableCell>
+                  <TableCell>Submission Date</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {indexedAssessments.map(key => {
+                  const {
+                    project,
+                    station,
+                    user,
+                    submissionDate,
+                  } = hazardAssessments[key];
+                  return (
+                    <TableRow
+                      key={key}
+                      hover
+                      className={classes.tableRow}
+                      onClick={() => {
+                        selectAHazardAssessment(key);
+                      }}
+                    >
+                      <TableCell>{project}</TableCell>
+                      <TableCell>{station}</TableCell>
+                      <TableCell>
+                        <Grid
+                          container
+                          spacing={2}
+                          direction="row"
+                          alignItems="center"
+                        >
+                          {user in users && (
+                            <>
+                              <Grid item>
+                                <Avatar src={users[user].photoURL} />
+                              </Grid>
+                              <Grid item>{users[user].displayName}</Grid>
+                            </>
+                          )}
+                        </Grid>
+                      </TableCell>
+                      <TableCell>{moment(submissionDate).fromNow()}</TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
           <Fab
             color="primary"
             aria-label="add"

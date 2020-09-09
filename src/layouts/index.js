@@ -26,6 +26,16 @@ class Layout extends Component {
           this.setState({ authenticated: false });
         } else {
           this.setState({ authenticated: true });
+          const { displayName, email, emailVerified, uid, photoURL } = user;
+          firebase
+            .database()
+            .ref(`/users/${uid}`)
+            .set({
+              email,
+              displayName,
+              emailVerified,
+              photoURL,
+            });
         }
       });
     });
