@@ -23,7 +23,7 @@ import {
   Home as HomeIcon,
   AccountCircle as AccountCircleIcon,
   Dashboard as DashboardIcon,
-  Add as AddIcon,
+  AddCircle as AddIcon,
 } from '@material-ui/icons';
 import {} from '@material-ui/core/colors';
 import { withFirebase } from './FirebaseContext';
