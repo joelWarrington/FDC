@@ -5,6 +5,7 @@ import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withFirebase } from '../../containers/FirebaseContext';
+import DailyReportForm from '../../containers/DailyReportForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -37,23 +38,7 @@ const DailyReportNewForm = props => {
       >
         Go Back
       </Button>
-      <Grid
-        container
-        direction="column"
-        alignContent="center"
-        className={classes.center}
-      >
-        <Grid item>
-          <Typography variant="h4" component="h2" className={classes.header}>
-            Coming soon!
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Typography variant="body1" component="p">
-            Check back later for when this form is live!
-          </Typography>
-        </Grid>
-      </Grid>
+      <DailyReportForm stepped />
     </Container>
   );
 };

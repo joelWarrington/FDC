@@ -1,6 +1,7 @@
 const initialState = {
   selectedHA: null,
   currentHazardAssessment: {},
+  currentDailyReport: {},
 };
 
 const SELECT_HAZARD_ASSESSMENT = 'SELECT_HAZARD_ASSESSMENT';
@@ -15,6 +16,12 @@ export const updateCurrentHazardAssessment = currentHazardAssessment => ({
   payload: currentHazardAssessment,
 });
 
+const UPDATE_CURRENT_DAILY_REPORT = 'UPDATE_CURRENT_DAILY_REPORT';
+export const updateCurrentDailyReport = currentDailyReport => ({
+  type: UPDATE_CURRENT_DAILY_REPORT,
+  payload: currentDailyReport,
+});
+
 export default (state = initialState, action) => {
   const { type, payload } = action;
   switch (type) {
@@ -22,6 +29,8 @@ export default (state = initialState, action) => {
       return { ...state, selectedHA: payload };
     case UPDATE_CURRENT_HAZARD_ASSESSMENT:
       return { ...state, currentHazardAssessment: payload };
+    case UPDATE_CURRENT_DAILY_REPORT:
+      return { ...state, currentDailyReport: payload };
     default:
       return state;
   }

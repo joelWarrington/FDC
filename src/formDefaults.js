@@ -109,7 +109,7 @@ export const hazardAssessmentDefaultValues = {
   safeToProceedExplanation: '',
 };
 
-export const dailyReport = {
+export const dailyReportDefaultValues = {
   ...defaults,
 };
 
