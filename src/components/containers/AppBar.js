@@ -12,6 +12,7 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
+  ListItemSecondaryAction,
   Button,
   Menu,
   MenuItem,
@@ -22,6 +23,7 @@ import {
   Home as HomeIcon,
   AccountCircle as AccountCircleIcon,
   Dashboard as DashboardIcon,
+  Add as AddIcon,
 } from '@material-ui/icons';
 import {} from '@material-ui/core/colors';
 import { withFirebase } from './FirebaseContext';
@@ -37,7 +39,7 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 1,
   },
   list: {
-    width: 250,
+    width: 275,
   },
 }));
 
@@ -66,7 +68,6 @@ function TopAppBar(props) {
       }
     });
   });
-  console.log(window.location.pathname);
 
   return (
     <div className={classes.root}>
@@ -178,9 +179,24 @@ function TopAppBar(props) {
           className={classes.list}
         >
           {[
-            { Label: 'Request For Information', url: '/forms/rfi' },
-            { Label: 'Daily Report', url: '/forms/dr' },
-            { Label: 'Hazard Assessment', url: '/forms/ha' },
+            {
+              Label: 'Request For Information',
+              url: '/forms/rfi',
+              secondaryIcon: () => <AddIcon />,
+              secondaryURL: '/forms/rfi/new',
+            },
+            {
+              Label: 'Daily Report',
+              url: '/forms/dr',
+              secondaryIcon: () => <AddIcon />,
+              secondaryURL: '/forms/dr/new',
+            },
+            {
+              Label: 'Hazard Assessment',
+              url: '/forms/ha',
+              secondaryIcon: () => <AddIcon />,
+              secondaryURL: '/forms/ha/new',
+            },
           ].map(navItem => (
             <ListItem
               button
@@ -191,6 +207,16 @@ function TopAppBar(props) {
               }}
             >
               <ListItemText primary={navItem.Label} />
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  onClick={() => {
+                    navigate(navItem.secondaryURL);
+                  }}
+                >
+                  {navItem.secondaryIcon()}
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
           ))}
         </List>
