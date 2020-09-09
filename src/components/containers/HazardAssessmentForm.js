@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { navigate } from 'gatsby';
 import {
   Switch,
-  Container,
   FormControlLabel,
   TextField,
   RadioGroup,
@@ -16,7 +15,6 @@ import {
   Grid,
   Divider,
   Checkbox,
-  Toolbar,
   Typography,
   Table,
   TableContainer,
@@ -30,7 +28,6 @@ import {
   useMediaQuery,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import moment from 'moment';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
@@ -41,10 +38,11 @@ import {
   LocationOn as LocationOnIcon,
   LocationOff as LocationOffIcon,
 } from '@material-ui/icons';
-import OrangeRadio from '../../atoms/OrangeRadioButton';
-import { withFirebase } from '../../containers/FirebaseContext';
-import { updateCurrentHazardAssessment } from '../../../state/app';
-import { hazardAssessmentDefaultValues } from '../../../formDefaults';
+import OrangeRadio from '../atoms/OrangeRadioButton';
+import { withFirebase } from './FirebaseContext';
+import { updateCurrentHazardAssessment } from '../../state/app';
+import { hazardAssessmentDefaultValues } from '../../formDefaults';
+import DefaultFormFieldSection from './DefaultFormFieldSection';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,6 +73,7 @@ const useStyles = makeStyles(theme => ({
 const HazardAssessmentForm = props => {
   const theme = useTheme();
   const classes = useStyles(theme);
+
   const {
     firebase,
     id,
@@ -92,12 +91,11 @@ const HazardAssessmentForm = props => {
     'Hazard Identification',
     'PPE',
   ]);
-  const [projects, updateProjects] = useState(['Project 1', 'Project 2']);
-  const [stations, updateStations] = useState(['Station 1', 'Station 2']);
+
   const isMobile = useMediaQuery('(max-width: 600px)');
 
   useEffect(() => {
-    updateHazardAssessment(hazardAssessmentDefaultValues);
+    // Update the default form values if an id prop is supplied
     if (id !== null) {
       firebase
         .database()
@@ -105,10 +103,19 @@ const HazardAssessmentForm = props => {
         .once('value', snapshot => {
           updateHazardAssessment(snapshot.val());
         });
+    } else {
+      updateHazardAssessment(hazardAssessmentDefaultValues);
     }
   }, [id]);
 
-  const formSubmission = () => {
+  const handleFormInputChange = (key, value) => {
+    updateHazardAssessment({
+      ...currentHazardAssessment,
+      [key]: value,
+    });
+  };
+
+  const handleFormSubmission = () => {
     const currentUserID = firebase.auth().currentUser.uid;
     let submissionID = uuidv4();
     if (id) {
@@ -126,134 +133,25 @@ const HazardAssessmentForm = props => {
       });
   };
 
-  const projectSection = () => (
-    <>
-      <Grid container spacing={2} justify="space-between">
-        <Grid item xs={12}>
-          <DateTimePicker
-            label="Submission Date"
-            inputVariant="outlined"
-            autoOk
-            disabled
-            fullWidth
-            value={currentHazardAssessment.submissionDate}
-            onChange={evt => {
-              updateHazardAssessment({
-                ...currentHazardAssessment,
-                submissionDate: [evt.target.value],
-              });
-            }}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Autocomplete
-            options={projects}
-            value={currentHazardAssessment.project}
-            onChange={evt => {
-              updateHazardAssessment({
-                ...currentHazardAssessment,
-                project: projects[evt.target.value],
-              });
-            }}
-            disabled={disabled}
-            renderInput={params => (
-              <TextField {...params} label="Project" variant="outlined" />
-            )}
-          />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Autocomplete
-            options={stations}
-            value={currentHazardAssessment.station}
-            onChange={evt => {
-              updateHazardAssessment({
-                ...currentHazardAssessment,
-                station: stations[evt.target.value],
-              });
-            }}
-            disabled={disabled}
-            getOptionLabel={option => option}
-            renderInput={params => (
-              <TextField {...params} label="Station" variant="outlined" />
-            )}
-          />
-        </Grid>
-      </Grid>
-      <Divider variant="middle" className={classes.divider} />
-      <Grid container spacing={2} justify="space-between">
-        {!disabled && (
-          <>
-            <Grid item xs={12} md={6}>
-              <Button
-                variant="outlined"
-                color="primary"
-                disabled={disabled}
-                fullWidth
-                size="large"
-                startIcon={<LocationOnIcon />}
-                onClick={() => {
-                  navigator.geolocation.getCurrentPosition(position => {
-                    const { latitude, longitude } = position.coords;
-                    updateHazardAssessment({
-                      ...currentHazardAssessment,
-                      location: {
-                        latitude,
-                        longitude,
-                      },
-                    });
-                  });
-                }}
-              >
-                Get Location
-              </Button>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              {(currentHazardAssessment?.location?.latitude ||
-                currentHazardAssessment?.location?.longitude) && (
-                <Button
-                  variant="outlined"
-                  color="default"
-                  disabled={disabled}
-                  fullWidth
-                  size="large"
-                  startIcon={<LocationOffIcon />}
-                  onClick={() => {
-                    updateHazardAssessment({
-                      ...currentHazardAssessment,
-                      location: {
-                        latitude: '',
-                        longitude: '',
-                      },
-                    });
-                  }}
-                >
-                  Remove Location
-                </Button>
-              )}
-            </Grid>
-          </>
-        )}
-        <Grid item xs={6} md={6}>
-          <TextField
-            disabled
-            fullWidth
-            label="Longitude"
-            variant="outlined"
-            value={currentHazardAssessment?.location?.longitude}
-          />
-        </Grid>
-        <Grid item xs={6} md={6}>
-          <TextField
-            disabled
-            fullWidth
-            label="Latitude"
-            variant="outlined"
-            value={currentHazardAssessment?.location?.latitude}
-          />
-        </Grid>
-      </Grid>
-    </>
-  );
+  const projectSection = () => {
+    const {
+      submissionDate,
+      project,
+      station,
+      location,
+    } = currentHazardAssessment;
+    return (
+      <DefaultFormFieldSection
+        handleFormInputChange={handleFormInputChange}
+        submissionDate={submissionDate}
+        project={project}
+        station={station}
+        location={location}
+        disabled={disabled}
+      />
+    );
+  };
+
   const hazardIdentificationSection = () => (
     <>
       <Grid container spacing={2}>
@@ -263,7 +161,6 @@ const HazardAssessmentForm = props => {
             label="Client/Owner on Site"
             checked={currentHazardAssessment.ownerOnSite}
             disabled={disabled}
-            fullWidth
             onChange={() => {
               updateHazardAssessment({
                 ...currentHazardAssessment,
@@ -299,7 +196,7 @@ const HazardAssessmentForm = props => {
       </Grid>
       <Divider className={classes.divider} />
       <Grid container spacing={2} justify="space-between">
-        {currentHazardAssessment.hazards?.map((hazard, index) => (
+        {currentHazardAssessment.hazards.map((hazard, index) => (
           <Grid item key={hazard.name}>
             <FormControl component="fieldset" margin="normal">
               <FormLabel component="legend">{hazard.label}</FormLabel>
@@ -566,7 +463,7 @@ const HazardAssessmentForm = props => {
                   if (activeStep !== steps.length - 1) {
                     updateActiveStep(activeStep + 1);
                   } else {
-                    formSubmission();
+                    handleFormSubmission();
                   }
                   window.scrollTo(0, 0);
                 }}
@@ -595,7 +492,7 @@ const HazardAssessmentForm = props => {
                 variant="contained"
                 color="primary"
                 onClick={() => {
-                  formSubmission();
+                  handleFormSubmission();
                   window.scrollTo(0, 0);
                 }}
               >
