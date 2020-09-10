@@ -17,15 +17,15 @@ export const hazardAssessmentDefaultValues = {
   ownerOnSite: false,
   mitigationSteps: '',
   hazards: [
-    { label: 'COVID-19', name: 'covid19', risk: 'N/A' },
-    { label: 'Heights Over 3 Meters', name: 'heights', risk: 'N/A' },
-    { label: 'Hot Materials', name: 'hot-materials', risk: 'N/A' },
-    { label: 'Open Flame', name: 'open-flame', risk: 'N/A' },
-    { label: 'Debris', name: 'debris', risk: 'N/A' },
-    { label: 'Chemical Hazards', name: 'chemical', risk: 'N/A' },
-    { label: 'Biological Hazards', name: 'biological', risk: 'N/A' },
-    { label: 'Inadequate Lighting', name: 'lighting', risk: 'N/A' },
-    { label: 'Confined Spaces', name: 'confined-spaces', risk: 'N/A' },
+    { label: 'COVID-19', risk: 'N/A' },
+    { label: 'Heights Over 3 Meters', risk: 'N/A' },
+    { label: 'Hot Materials', risk: 'N/A' },
+    { label: 'Open Flame', risk: 'N/A' },
+    { label: 'Debris', risk: 'N/A' },
+    { label: 'Chemical Hazards', risk: 'N/A' },
+    { label: 'Biological Hazards', risk: 'N/A' },
+    { label: 'Inadequate Lighting', risk: 'N/A' },
+    { label: 'Confined Spaces', risk: 'N/A' },
     {
       label: 'Weather Conditions',
       name: 'weather-conditions',
@@ -111,6 +111,14 @@ export const hazardAssessmentDefaultValues = {
 
 export const dailyReportDefaultValues = {
   ...defaults,
+  weather: [
+    { name: 'Cloudy', checked: false },
+    { name: 'Dusty', checked: false },
+    { name: 'Fog', checked: false },
+    { name: 'Rainy', checked: false },
+    { name: 'Sunny', checked: false },
+    { name: 'Snow', checked: false },
+  ],
 };
 
 export const requestForInformation = {

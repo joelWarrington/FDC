@@ -29,7 +29,7 @@ import { makeStyles, useTheme } from '@material-ui/styles';
 import moment from 'moment';
 import { withFirebase } from '../../containers/FirebaseContext';
 import { selectHazardAssessment } from '../../../state/app';
-import HazardAssessmentForm from '../../containers/HazardAssessmentForm';
+import HazardAssessmentForm from '../../forms/Hazard Assessment';
 
 const useStyles = makeStyles(theme => ({
   root: {
