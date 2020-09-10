@@ -117,37 +117,6 @@ const HazardAssessmentForm = props => {
       });
   };
 
-  const ProjectDetailSection = () => (
-    <ProjectDetails
-      handleFormInputChange={handleFormInputChange}
-      submissionDate={submissionDate}
-      project={project}
-      station={station}
-      location={location}
-      disabled={disabled}
-    />
-  );
-
-  const HazardIdentificationSection = () => (
-    <HazardIdentificationDetails
-      handleFormInputChange={handleFormInputChange}
-      ownerOnSite={ownerOnSite}
-      hazards={hazards}
-      miscHazards={miscHazards}
-      mitigationSteps={mitigationSteps}
-      disabled={disabled}
-    />
-  );
-  const PPESection = () => (
-    <PPEDetails
-      handleFormInputChange={handleFormInputChange}
-      PPE={PPE}
-      isItSafeToProceed={isItSafeToProceed}
-      safeToProceedExplanation={safeToProceedExplanation}
-      disabled={disabled}
-    />
-  );
-
   return (
     <div className={classes.root}>
       {stepped ? (
@@ -164,12 +133,34 @@ const HazardAssessmentForm = props => {
           </Stepper>
           <Paper className={classes.paper} square>
             {steps[activeStep] === 'Project Details' && (
-              <ProjectDetailSection />
+              <ProjectDetails
+                handleFormInputChange={handleFormInputChange}
+                submissionDate={submissionDate}
+                project={project}
+                station={station}
+                location={location}
+                disabled={disabled}
+              />
             )}
             {steps[activeStep] === 'Hazard Identification' && (
-              <HazardIdentificationSection />
+              <HazardIdentificationDetails
+                handleFormInputChange={handleFormInputChange}
+                ownerOnSite={ownerOnSite}
+                hazards={hazards}
+                miscHazards={miscHazards}
+                mitigationSteps={mitigationSteps}
+                disabled={disabled}
+              />
             )}
-            {steps[activeStep] === 'PPE' && <PPESection />}
+            {steps[activeStep] === 'PPE' && (
+              <PPEDetails
+                handleFormInputChange={handleFormInputChange}
+                PPE={PPE}
+                isItSafeToProceed={isItSafeToProceed}
+                safeToProceedExplanation={safeToProceedExplanation}
+                disabled={disabled}
+              />
+            )}
           </Paper>
           <Grid
             className={classes.stepperButtons}
@@ -211,9 +202,29 @@ const HazardAssessmentForm = props => {
       ) : (
         <>
           <Paper className={classes.paper} square>
-            <ProjectDetailSection />
-            <HazardIdentificationSection />
-            <PPESection />
+            <ProjectDetails
+              handleFormInputChange={handleFormInputChange}
+              submissionDate={submissionDate}
+              project={project}
+              station={station}
+              location={location}
+              disabled={disabled}
+            />
+            <HazardIdentificationDetails
+              handleFormInputChange={handleFormInputChange}
+              ownerOnSite={ownerOnSite}
+              hazards={hazards}
+              miscHazards={miscHazards}
+              mitigationSteps={mitigationSteps}
+              disabled={disabled}
+            />
+            <PPEDetails
+              handleFormInputChange={handleFormInputChange}
+              PPE={PPE}
+              isItSafeToProceed={isItSafeToProceed}
+              safeToProceedExplanation={safeToProceedExplanation}
+              disabled={disabled}
+            />
           </Paper>
           <Grid
             className={classes.stepperButtons}
