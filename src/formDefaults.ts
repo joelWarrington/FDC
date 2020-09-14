@@ -119,6 +119,15 @@ export const dailyReportDefaultValues = {
     { name: 'Sunny', checked: false },
     { name: 'Snow', checked: false },
   ],
+  contractors: [
+    {
+      name: '',
+      count: 0,
+      isPrime: false,
+    },
+  ],
+  visitors: [],
+  equipment: [],
 };
 
 export const requestForInformation = {
