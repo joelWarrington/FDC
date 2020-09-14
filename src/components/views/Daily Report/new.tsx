@@ -5,7 +5,7 @@ import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withFirebase } from '../../containers/FirebaseContext';
-import DailyReportForm from '../../containers/DailyReportForm';
+import DailyReportForm from '../../forms/Daily Report';
 
 const useStyles = makeStyles(theme => ({
   root: {

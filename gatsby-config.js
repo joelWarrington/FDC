@@ -39,5 +39,7 @@ module.exports = {
     {
       resolve: 'gatsby-plugin-offline',
     },
+    'gatsby-plugin-typescript',
+    'gatsby-plugin-tslint',
   ],
 };
