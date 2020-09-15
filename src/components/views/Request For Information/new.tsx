@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Button, Typography, Grid } from '@material-ui/core';
 import { KeyboardBackspace as BackIcon } from '@material-ui/icons';
-import { makeStyles, useTheme } from '@material-ui/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withFirebase } from '../../containers/FirebaseContext';

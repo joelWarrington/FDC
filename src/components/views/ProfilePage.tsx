@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Typography, Button, Paper, Grid } from '@material-ui/core';
-import { makeStyles, useTheme } from '@material-ui/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { navigate } from '@reach/router';
 import Avatar, { Piece } from 'avataaars';
 import { withFirebase } from '../containers/FirebaseContext';

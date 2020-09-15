@@ -39,21 +39,23 @@ const HazardIdentificationSection = props => {
           />
         </Grid>
         {miscHazards &&
-          miscHazards.map((hazard, index) => (
-            <Grid item xs={6} sm={3} key={hazard.label}>
-              <FormControlLabel
-                control={<Switch color="primary" />}
-                label={hazard.label}
-                checked={hazard.checked}
-                disabled={disabled}
-                onChange={() => {
-                  const newHazards = miscHazards;
-                  newHazards[index] = { ...hazard, checked: !hazard.checked };
-                  handleFormInputChange('miscHazards', newHazards);
-                }}
-              />
-            </Grid>
-          ))}
+          miscHazards.map(
+            (hazard: { label: string; checked: boolean }, index: number) => (
+              <Grid item xs={6} sm={3} key={hazard.label}>
+                <FormControlLabel
+                  control={<Switch color="primary" />}
+                  label={hazard.label}
+                  checked={hazard.checked}
+                  disabled={disabled}
+                  onChange={() => {
+                    const newHazards = miscHazards;
+                    newHazards[index] = { ...hazard, checked: !hazard.checked };
+                    handleFormInputChange('miscHazards', newHazards);
+                  }}
+                />
+              </Grid>
+            )
+          )}
       </Grid>
       <Divider />
       <Grid container spacing={2} justify="space-between">

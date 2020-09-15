@@ -7,7 +7,7 @@ import { orange, deepPurple } from '@material-ui/core/colors';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
-import AppBar from '../containers/AppBar';
+import AppBar from './AppBar';
 
 const darkTheme = createMuiTheme({
   palette: {

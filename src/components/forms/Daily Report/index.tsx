@@ -10,7 +10,7 @@ import {
   useMediaQuery,
 } from '@material-ui/core';
 import PropTypes from 'prop-types';
-import { makeStyles, useTheme } from '@material-ui/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';

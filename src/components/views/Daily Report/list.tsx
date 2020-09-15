@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Button, Typography, Grid } from '@material-ui/core';
+import { Container, Button, Typography, Grid } from '@material-ui/core/styles';
 import { KeyboardBackspace as BackIcon } from '@material-ui/icons';
 import { makeStyles, useTheme } from '@material-ui/styles';
 import { compose } from 'recompose';
