@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { StyledFirebaseAuth } from 'react-firebaseui';
 import { StaticQuery, graphql } from 'gatsby';
 import Img from 'gatsby-image';
-import { withStyles } from '@material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 import { Paper, Typography } from '@material-ui/core';
 import { compose } from 'recompose';
 import { orange } from '@material-ui/core/colors';

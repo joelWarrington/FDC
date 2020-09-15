@@ -25,7 +25,7 @@ import {
   KeyboardBackspace as BackIcon,
   Edit as EditIcon,
 } from '@material-ui/icons';
-import { makeStyles, useTheme } from '@material-ui/styles';
+import { makeStyles, useTheme } from '@material-ui/core/styles';
 import moment from 'moment';
 import { withFirebase } from '../../containers/FirebaseContext';
 import { selectHazardAssessment } from '../../../state/app';
