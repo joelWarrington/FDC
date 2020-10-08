@@ -136,7 +136,7 @@ const ProjectDetailSection = props => {
             fullWidth
             label="Longitude"
             variant="outlined"
-            value={location?.longitude}
+            value={location?.longitude || ''}
           />
         </Grid>
         <Grid item xs={6} md={6}>
@@ -145,7 +145,7 @@ const ProjectDetailSection = props => {
             fullWidth
             label="Latitude"
             variant="outlined"
-            value={location?.latitude}
+            value={location?.latitude || ''}
           />
         </Grid>
       </Grid>

@@ -130,13 +130,12 @@ const PPESection = props => {
                     checked={equipment.checked}
                     disabled={disabled}
                     onChange={() => {
-                      handleFormInputChange(
-                        'PPE',
-                        PPE.splice(index, 1, {
-                          ...equipment,
-                          checked: !equipment.checked,
-                        })
-                      );
+                      const newPPE = PPE;
+                      newPPE[index] = {
+                        ...equipment,
+                        checked: !equipment.checked,
+                      };
+                      handleFormInputChange('PPE', newPPE);
                     }}
                   />
                 </TableCell>
